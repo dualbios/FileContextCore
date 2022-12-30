@@ -1,15 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.28803.352
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileContextCore", "FileContextCore\FileContextCore.csproj", "{F8A3A7CB-1F80-4021-B3BB-88919CB1B005}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Example", "Example\Example.csproj", "{B6D2852A-973B-47F7-A390-7A1A5203E5F4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ASPNETDemo", "ASPNETDemo\ASPNETDemo.csproj", "{8E6BFB30-5AF1-46EF-81B7-A8200616E45A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNETDemo", "ASPNETDemo\ASPNETDemo.csproj", "{8E6BFB30-5AF1-46EF-81B7-A8200616E45A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CascadeExample", "CascadeExample\CascadeExample.csproj", "{3D51BF95-B38E-4221-AAAE-5D093FD163DA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CascadeExample", "CascadeExample\CascadeExample.csproj", "{3D51BF95-B38E-4221-AAAE-5D093FD163DA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStoreCore", "FileStoreCore\FileStoreCore.csproj", "{7BA82073-515C-4F21-8A25-B62AD1264062}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStoreCore.Example", "FileStoreCore.Example\FileStoreCore.Example.csproj", "{A66103C8-03D3-4C1F-A54B-DBEA9488B694}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +37,14 @@ Global
 		{3D51BF95-B38E-4221-AAAE-5D093FD163DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{3D51BF95-B38E-4221-AAAE-5D093FD163DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{3D51BF95-B38E-4221-AAAE-5D093FD163DA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7BA82073-515C-4F21-8A25-B62AD1264062}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7BA82073-515C-4F21-8A25-B62AD1264062}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7BA82073-515C-4F21-8A25-B62AD1264062}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7BA82073-515C-4F21-8A25-B62AD1264062}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A66103C8-03D3-4C1F-A54B-DBEA9488B694}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A66103C8-03D3-4C1F-A54B-DBEA9488B694}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A66103C8-03D3-4C1F-A54B-DBEA9488B694}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A66103C8-03D3-4C1F-A54B-DBEA9488B694}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
