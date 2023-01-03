@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace FileContextCore
+namespace System.String
 {
-    static class StringHelper
+    static class StringHelperExtensions
     {
         public static string GetValidFileName(this string input)
         {

@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
+using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 
 namespace FileStoreCore.Infrastructure;
@@ -17,6 +18,17 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     protected override ShapedQueryExpression CreateShapedQueryExpression(IEntityType entityType)
     {
         throw new NotImplementedException();
+        //var queryExpression = new FileStoreQueryExpression(entityType);
+
+        //return new ShapedQueryExpression(
+        //    queryExpression,
+        //    new EntityShaperExpression(
+        //        entityType,
+        //        new ProjectionBindingExpression(
+        //            queryExpression,
+        //            new ProjectionMember(),
+        //            typeof(ValueBuffer)),
+        //false));
     }
 
     protected override QueryableMethodTranslatingExpressionVisitor CreateSubqueryVisitor()

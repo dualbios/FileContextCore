@@ -35,6 +35,13 @@ public static class FileStoreServiceCollectionExtensions
             .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, FileStoreQueryableMethodTranslatingExpressionVisitorFactory>()
             .TryAdd<IQueryTranslationPostprocessorFactory, FileStoreQueryTranslationPostprocessorFactory>()
 
+            .TryAddProviderSpecificServices(
+                b => b
+                    .TryAddSingleton<FileStoreFileManager, FileStoreFileManager>()
+                    .TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>()
+                    .TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>());
+
+
             //.TryAdd<ISingletonOptions, IFileContextSingletonOptions>(p => p.GetService<IFileContextSingletonOptions>())
             //.TryAddProviderSpecificServices(
             //    b => b

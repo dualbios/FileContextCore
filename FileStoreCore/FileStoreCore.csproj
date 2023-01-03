@@ -3,11 +3,12 @@
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
+    <Nullable>disable</Nullable>
   </PropertyGroup>
 
   <ItemGroup>
     <Folder Include="Infrastructure\" />
+    <Folder Include="Serializers\" />
     <Folder Include="Storage\" />
   </ItemGroup>
 

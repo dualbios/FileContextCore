@@ -40,7 +40,7 @@ namespace FileContextCore.Storage.Internal
 
     
         public virtual IFileContextTable Create(IEntityType entityType)
-            => _factories.GetOrAdd(entityType.FindPrimaryKey(), Create)();
+            => _factories.GetOrAdd(entityType.FindPrimaryKey(), key => Create(key))();
 
         private Func<IFileContextTable> Create([NotNull] IKey key)
             => (Func<IFileContextTable>)typeof(FileContextTableFactory).GetTypeInfo()
