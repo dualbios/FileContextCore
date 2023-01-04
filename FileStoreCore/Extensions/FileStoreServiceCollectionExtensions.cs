@@ -38,8 +38,10 @@ public static class FileStoreServiceCollectionExtensions
             .TryAddProviderSpecificServices(
                 b => b
                     .TryAddSingleton<FileStoreFileManager, FileStoreFileManager>()
-                    .TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>()
-                    .TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>());
+                    .TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>());
+                    //.TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>()
+                    //.GetInfrastructure()
+                    //.AddDependencyScoped<RelationalQueryableMethodTranslatingExpressionVisitorDependencies>());
 
 
             //.TryAdd<ISingletonOptions, IFileContextSingletonOptions>(p => p.GetService<IFileContextSingletonOptions>())
