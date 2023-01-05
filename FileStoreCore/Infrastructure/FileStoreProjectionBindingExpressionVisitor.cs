@@ -1,8 +1,11 @@
 ﻿using FileStoreCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
+using System;
+using EntityProjectionExpression = Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression;
 
 namespace FileStoreCore.Infrastructure;
 
@@ -112,7 +115,7 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
                             return AddClientProjection(mappedProjection, expression.Type.MakeNullable());
                         }
 
-                        throw new InvalidOperationException(CoreStrings.TranslationFailed(projectionBindingExpression.Print()));
+                        throw new InvalidOperationException("CoreStrings.TranslationFailed(projectionBindingExpression.Print())");
 
                     case MaterializeCollectionNavigationExpression materializeCollectionNavigationExpression:
                         {
@@ -286,7 +289,7 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
                 : QueryCompilationContext.NotTranslatedExpression;
         }
 
-        throw new InvalidOperationException(CoreStrings.TranslationFailed(extensionExpression.Print()));
+        throw new InvalidOperationException("CoreStrings.TranslationFailed(extensionExpression.Print())");
     }
 
     /// <summary>
