@@ -11,6 +11,8 @@ namespace FileStoreCore.Example
             Context db = new Context();
             Console.WriteLine(db.Database.CanConnect());
 
+            List<SimpleEntity> simpleEntities = db.SimpleEntities.ToList();
+
             //SimpleEntity firstOrDefault = db.SimpleEntities.FirstOrDefault();
 
             //List<User> users2 = db.Users.Include("Contents.Entries").Include("Contents").Include("Contents").ToList();
