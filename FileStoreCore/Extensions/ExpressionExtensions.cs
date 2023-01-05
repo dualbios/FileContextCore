@@ -22,4 +22,26 @@ public static class ExpressionExtensions
 
         return expression;
     }
+
+    public static bool IsNullConstantExpression(this Expression expression)
+        => RemoveConvert(expression) is ConstantExpression constantExpression
+           && constantExpression.Value == null;
+
+    private static Expression RemoveConvert(Expression expression)
+    {
+        if (expression is UnaryExpression unaryExpression
+            && (expression.NodeType == ExpressionType.Convert
+                || expression.NodeType == ExpressionType.ConvertChecked))
+        {
+            return RemoveConvert(unaryExpression.Operand);
+        }
+
+        return expression;
+    }
+
+    public static T GetConstantValue<T>(this Expression expression)
+        => expression is ConstantExpression constantExpression
+            ? (T)constantExpression.Value!
+            : throw new InvalidOperationException();
+
 }

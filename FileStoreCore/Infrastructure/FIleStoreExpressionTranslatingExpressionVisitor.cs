@@ -5,13 +5,17 @@ using System.Linq.Expressions;
 using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
+using FileStoreCore.Extensions;
 using FileStoreCore.Infrastructure;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
+using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
+using System.Reflection;
 using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions;
 
 namespace FileStoreCore.Infrastructure;
@@ -452,7 +456,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
     {
         switch (extensionExpression)
         {
-            case EntityProjectionExpression:
+            case Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression:
             case EntityReferenceExpression:
                 return extensionExpression;
 
@@ -484,7 +488,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     protected override Expression VisitLambda<T>(Expression<T> lambdaExpression)
-        => throw new InvalidOperationException(CoreStrings.TranslationFailed(lambdaExpression.Print()));
+        => throw new InvalidOperationException("CoreStrings.TranslationFailed(lambdaExpression.Print())");
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -1107,7 +1111,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
                 return null;
             }
 
-            var result = ((EntityProjectionExpression)valueBufferExpression).BindProperty(property);
+            var result = ((Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)valueBufferExpression).BindProperty(property);
 
             // if the result type change was just nullability change e.g from int to int?
             // we want to preserve the new type for null propagation
@@ -1125,7 +1129,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
             var inMemoryQueryExpression = (FileStoreQueryExpression)entityReferenceExpression.SubqueryEntity.QueryExpression;
 
             var projectionBindingExpression = (ProjectionBindingExpression)entityShaper.ValueBufferExpression;
-            var entityProjectionExpression = (EntityProjectionExpression)inMemoryQueryExpression.GetProjection(
+            var entityProjectionExpression = (Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)inMemoryQueryExpression.GetProjection(
                 projectionBindingExpression);
             var readValueExpression = entityProjectionExpression.BindProperty(property);
 
@@ -1173,7 +1177,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
                 readExpression));
     }
 
-    [UsedImplicitly]
+    //[UsedImplicitly]
     private static T GetParameterValue<T>(QueryContext queryContext, string parameterName)
         => (T)queryContext.ParameterValues[parameterName]!;
 
