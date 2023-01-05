@@ -2,6 +2,7 @@
 using FileStoreCore.Storage;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 using Microsoft.EntityFrameworkCore.Internal;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
@@ -31,8 +32,8 @@ public static class FileStoreServiceCollectionExtensions
             .TryAdd<ITypeMappingSource, FileStoreTypeMappingSource>()
 
             //// New Query pipeline
-            .TryAdd<IShapedQueryCompilingExpressionVisitorFactory, FileStoreShapedQueryCompilingExpressionVisitorFactory>()
-            .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, FileStoreQueryableMethodTranslatingExpressionVisitorFactory>()
+            .TryAdd<IShapedQueryCompilingExpressionVisitorFactory, InMemoryShapedQueryCompilingExpressionVisitorFactory>()
+            .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, InMemoryQueryableMethodTranslatingExpressionVisitorFactory>()
             .TryAdd<IQueryTranslationPostprocessorFactory, FileStoreQueryTranslationPostprocessorFactory>()
 
             .TryAddProviderSpecificServices(

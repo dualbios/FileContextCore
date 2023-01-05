@@ -6,8 +6,9 @@ public class FileStoreQueryTranslationPostprocessor : QueryTranslationPostproces
 {
     public FileStoreQueryTranslationPostprocessor(
         QueryTranslationPostprocessorDependencies dependencies,
-        QueryCompilationContext queryCompilationContext) 
+        QueryCompilationContext queryCompilationContext)
         : base(dependencies, queryCompilationContext)
     {
+        
     }
 }

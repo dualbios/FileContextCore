@@ -1,20 +1,25 @@
-﻿using FileStoreCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
-using System;
-using EntityProjectionExpression = Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression;
 
-namespace FileStoreCore.Infrastructure;
+namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 
-internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
+public class InMemoryProjectionBindingExpressionVisitor : ExpressionVisitor
 {
-    private readonly FileStoreQueryableMethodTranslatingExpressionVisitor _queryableMethodTranslatingExpressionVisitor;
-    private readonly FileStoreExpressionTranslatingExpressionVisitor _expressionTranslatingExpressionVisitor;
+    private readonly InMemoryQueryableMethodTranslatingExpressionVisitor _queryableMethodTranslatingExpressionVisitor;
+    private readonly InMemoryExpressionTranslatingExpressionVisitor _expressionTranslatingExpressionVisitor;
 
-    private FileStoreQueryExpression _queryExpression;
+    private InMemoryQueryExpression _queryExpression;
     private bool _indexBasedBinding;
 
     private Dictionary<EntityProjectionExpression, ProjectionBindingExpression>? _entityProjectionCache;
@@ -29,9 +34,9 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public FileStoreProjectionBindingExpressionVisitor(
-        FileStoreQueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor,
-        FileStoreExpressionTranslatingExpressionVisitor expressionTranslatingExpressionVisitor)
+    public InMemoryProjectionBindingExpressionVisitor(
+        InMemoryQueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor,
+        InMemoryExpressionTranslatingExpressionVisitor expressionTranslatingExpressionVisitor)
     {
         _queryableMethodTranslatingExpressionVisitor = queryableMethodTranslatingExpressionVisitor;
         _expressionTranslatingExpressionVisitor = expressionTranslatingExpressionVisitor;
@@ -44,7 +49,7 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression Translate(FileStoreQueryExpression queryExpression, Expression expression)
+    public virtual Expression Translate(InMemoryQueryExpression queryExpression, Expression expression)
     {
         _queryExpression = queryExpression;
         _indexBasedBinding = false;
@@ -110,7 +115,7 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
                             return AddClientProjection(entityProjection, typeof(ValueBuffer));
                         }
 
-                        if (mappedProjection is not FileStoreQueryExpression)
+                        if (mappedProjection is not InMemoryQueryExpression)
                         {
                             return AddClientProjection(mappedProjection, expression.Type.MakeNullable());
                         }
@@ -118,17 +123,17 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
                         throw new InvalidOperationException("CoreStrings.TranslationFailed(projectionBindingExpression.Print())");
 
                     case MaterializeCollectionNavigationExpression materializeCollectionNavigationExpression:
-                        {
-                            var subquery = _queryableMethodTranslatingExpressionVisitor.TranslateSubquery(
-                                materializeCollectionNavigationExpression.Subquery)!;
-                            _clientProjections!.Add(subquery.QueryExpression);
-                            return new CollectionResultShaperExpression(
-                                new ProjectionBindingExpression(
-                                    _queryExpression, _clientProjections.Count - 1, typeof(IEnumerable<ValueBuffer>)),
-                                subquery.ShaperExpression,
-                                materializeCollectionNavigationExpression.Navigation,
-                                materializeCollectionNavigationExpression.Navigation.ClrType.GetSequenceType());
-                        }
+                    {
+                        var subquery = _queryableMethodTranslatingExpressionVisitor.TranslateSubquery(
+                            materializeCollectionNavigationExpression.Subquery)!;
+                        _clientProjections!.Add(subquery.QueryExpression);
+                        return new CollectionResultShaperExpression(
+                            new ProjectionBindingExpression(
+                                _queryExpression, _clientProjections.Count - 1, typeof(IEnumerable<ValueBuffer>)),
+                            subquery.ShaperExpression,
+                            materializeCollectionNavigationExpression.Navigation,
+                            materializeCollectionNavigationExpression.Navigation.ClrType.GetSequenceType());
+                    }
 
                     case MethodCallExpression methodCallExpression:
                         if (methodCallExpression.Method.IsGenericMethod
@@ -257,7 +262,7 @@ internal class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
             if (entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression)
             {
                 entityProjectionExpression =
-                    (EntityProjectionExpression)((FileStoreQueryExpression)projectionBindingExpression.QueryExpression)
+                    (EntityProjectionExpression)((InMemoryQueryExpression)projectionBindingExpression.QueryExpression)
                     .GetProjection(projectionBindingExpression);
             }
             else

@@ -1,4 +1,7 @@
-﻿using System.Collections;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using System.Collections;
 using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
@@ -6,21 +9,22 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using FileStoreCore.Extensions;
-using FileStoreCore.Infrastructure;
 using JetBrains.Annotations;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Reflection;
 using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions;
 
-namespace FileStoreCore.Infrastructure;
+namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 
-internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
+public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
 {
     private const string RuntimeParameterPrefix = QueryCompilationContext.QueryParameterPrefix + "entity_equality_";
 
@@ -45,13 +49,13 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
     private static readonly MemberInfo ValueBufferIsEmpty = typeof(ValueBuffer).GetMember(nameof(ValueBuffer.IsEmpty))[0];
 
     private static readonly MethodInfo ParameterValueExtractorMethod =
-        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterValueExtractor))!;
+        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterValueExtractor))!;
 
     private static readonly MethodInfo ParameterListValueExtractorMethod =
-        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterListValueExtractor))!;
+        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterListValueExtractor))!;
 
     private static readonly MethodInfo GetParameterValueMethodInfo =
-        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(GetParameterValue))!;
+        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(GetParameterValue))!;
 
     private static readonly MethodInfo LikeMethodInfo = typeof(DbFunctionsExtensions).GetRuntimeMethod(
         nameof(DbFunctionsExtensions.Like), new[] { typeof(DbFunctions), typeof(string), typeof(string) })!;
@@ -66,7 +70,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         nameof(Random.NextDouble), Type.EmptyTypes)!;
 
     private static readonly MethodInfo InMemoryLikeMethodInfo =
-        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(InMemoryLike))!;
+        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(InMemoryLike))!;
 
     private static readonly MethodInfo GetTypeMethodInfo = typeof(object).GetTypeInfo().GetDeclaredMethod(nameof(GetType))!;
 
@@ -93,7 +97,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public FileStoreExpressionTranslatingExpressionVisitor(
+    public InMemoryExpressionTranslatingExpressionVisitor(
         QueryCompilationContext queryCompilationContext,
         QueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor)
     {
@@ -456,7 +460,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
     {
         switch (extensionExpression)
         {
-            case Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression:
+            case EntityProjectionExpression:
             case EntityReferenceExpression:
                 return extensionExpression;
 
@@ -464,7 +468,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
                 return new EntityReferenceExpression(entityShaperExpression);
 
             case ProjectionBindingExpression projectionBindingExpression:
-                return ((FileStoreQueryExpression)projectionBindingExpression.QueryExpression)
+                return ((InMemoryQueryExpression)projectionBindingExpression.QueryExpression)
                     .GetProjection(projectionBindingExpression);
 
             default:
@@ -627,7 +631,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         if (methodCallExpression.TryGetEFPropertyArguments(out var source, out var propertyName))
         {
             return TryBindMember(Visit(source), MemberIdentity.Create(propertyName), methodCallExpression.Type)
-                ?? throw new InvalidOperationException(CoreStrings.QueryUnableToTranslateEFProperty(methodCallExpression.Print()));
+                ?? throw new InvalidOperationException("CoreStrings.QueryUnableToTranslateEFProperty(methodCallExpression.Print())");
         }
 
         // EF Indexer property
@@ -641,7 +645,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         var subqueryTranslation = _queryableMethodTranslatingExpressionVisitor.TranslateSubquery(methodCallExpression);
         if (subqueryTranslation != null)
         {
-            var subquery = (FileStoreQueryExpression)subqueryTranslation.QueryExpression;
+            var subquery = (InMemoryQueryExpression)subqueryTranslation.QueryExpression;
             if (subqueryTranslation.ResultCardinality == ResultCardinality.Enumerable)
             {
                 return QueryCompilationContext.NotTranslatedExpression;
@@ -966,7 +970,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
                 Expression.Constant(parameterExpression.Name));
         }
 
-        throw new InvalidOperationException(CoreStrings.TranslationFailed(parameterExpression.Print()));
+        throw new InvalidOperationException("CoreStrings.TranslationFailed(parameterExpression.Print())");
     }
 
     /// <summary>
@@ -1094,9 +1098,9 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         }
 
         AddTranslationErrorDetails(
-            CoreStrings.QueryUnableToTranslateMember(
+            @"CoreStrings.QueryUnableToTranslateMember(
                 member.Name,
-                entityReferenceExpression.EntityType.DisplayName()));
+                entityReferenceExpression.EntityType.DisplayName())");
 
         return null;
     }
@@ -1111,7 +1115,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
                 return null;
             }
 
-            var result = ((Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)valueBufferExpression).BindProperty(property);
+            var result = ((EntityProjectionExpression)valueBufferExpression).BindProperty(property);
 
             // if the result type change was just nullability change e.g from int to int?
             // we want to preserve the new type for null propagation
@@ -1126,10 +1130,10 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         if (entityReferenceExpression.SubqueryEntity != null)
         {
             var entityShaper = (EntityShaperExpression)entityReferenceExpression.SubqueryEntity.ShaperExpression;
-            var inMemoryQueryExpression = (FileStoreQueryExpression)entityReferenceExpression.SubqueryEntity.QueryExpression;
+            var inMemoryQueryExpression = (InMemoryQueryExpression)entityReferenceExpression.SubqueryEntity.QueryExpression;
 
             var projectionBindingExpression = (ProjectionBindingExpression)entityShaper.ValueBufferExpression;
-            var entityProjectionExpression = (Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)inMemoryQueryExpression.GetProjection(
+            var entityProjectionExpression = (EntityProjectionExpression)inMemoryQueryExpression.GetProjection(
                 projectionBindingExpression);
             var readValueExpression = entityProjectionExpression.BindProperty(property);
 
@@ -1143,7 +1147,7 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
     }
 
     private static Expression ProcessSingleResultScalar(
-        FileStoreQueryExpression inMemoryQueryExpression,
+        InMemoryQueryExpression inMemoryQueryExpression,
         Expression readValueExpression,
         Type type)
     {
@@ -1230,15 +1234,15 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         if (primaryKeyProperties == null)
         {
             throw new InvalidOperationException(
-                CoreStrings.EntityEqualityOnKeylessEntityNotSupported(
-                    nameof(Queryable.Contains), entityType.DisplayName()));
+                @"CoreStrings.EntityEqualityOnKeylessEntityNotSupported(
+                    nameof(Queryable.Contains), entityType.DisplayName())");
         }
 
         if (primaryKeyProperties.Count > 1)
         {
             throw new InvalidOperationException(
-                CoreStrings.EntityEqualityOnCompositeKeyEntitySubqueryNotSupported(
-                    nameof(Queryable.Contains), entityType.DisplayName()));
+                @"CoreStrings.EntityEqualityOnCompositeKeyEntitySubqueryNotSupported(
+                    nameof(Queryable.Contains), entityType.DisplayName())");
         }
 
         var property = primaryKeyProperties[0];
@@ -1317,13 +1321,13 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
             if (primaryKeyProperties1 == null)
             {
                 throw new InvalidOperationException(
-                    CoreStrings.EntityEqualityOnKeylessEntityNotSupported(
+                    @"CoreStrings.EntityEqualityOnKeylessEntityNotSupported(
                         nodeType == ExpressionType.Equal
-                            ? equalsMethod ? nameof(object.Equals) : "=="
+                            ? equalsMethod ? nameof(object.Equals) : ""==""
                             : equalsMethod
-                                ? "!" + nameof(object.Equals)
-                                : "!=",
-                        entityType1.DisplayName()));
+                                ? ""!"" + nameof(object.Equals)
+                                : ""!="",
+                        entityType1.DisplayName())");
             }
 
             result = Visit(
@@ -1355,13 +1359,13 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
         if (primaryKeyProperties == null)
         {
             throw new InvalidOperationException(
-                CoreStrings.EntityEqualityOnKeylessEntityNotSupported(
+                @"CoreStrings.EntityEqualityOnKeylessEntityNotSupported(
                     nodeType == ExpressionType.Equal
-                        ? equalsMethod ? nameof(object.Equals) : "=="
+                        ? equalsMethod ? nameof(object.Equals) : ""==""
                         : equalsMethod
-                            ? "!" + nameof(object.Equals)
-                            : "!=",
-                    entityType.DisplayName()));
+                            ? ""!"" + nameof(object.Equals)
+                            : ""!="",
+                    entityType.DisplayName())");
         }
 
         if (primaryKeyProperties.Count > 1
@@ -1369,13 +1373,13 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
                 || rightEntityReference?.SubqueryEntity != null))
         {
             throw new InvalidOperationException(
-                CoreStrings.EntityEqualityOnCompositeKeyEntitySubqueryNotSupported(
+                @"CoreStrings.EntityEqualityOnCompositeKeyEntitySubqueryNotSupported(
                     nodeType == ExpressionType.Equal
-                        ? equalsMethod ? nameof(object.Equals) : "=="
+                        ? equalsMethod ? nameof(object.Equals) : ""==""
                         : equalsMethod
-                            ? "!" + nameof(object.Equals)
-                            : "!=",
-                    entityType.DisplayName()));
+                            ? ""!"" + nameof(object.Equals)
+                            : ""!="",
+                    entityType.DisplayName())");
         }
 
         result = Visit(
@@ -1580,24 +1584,24 @@ internal class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisit
             switch (c)
             {
                 case '_':
-                    {
-                        stringBuilder.Append(escaped ? '_' : '.');
-                        break;
-                    }
+                {
+                    stringBuilder.Append(escaped ? '_' : '.');
+                    break;
+                }
                 case '%':
-                    {
-                        stringBuilder.Append(escaped ? "%" : ".*");
-                        break;
-                    }
+                {
+                    stringBuilder.Append(escaped ? "%" : ".*");
+                    break;
+                }
                 default:
+                {
+                    if (c != singleEscapeCharacter)
                     {
-                        if (c != singleEscapeCharacter)
-                        {
-                            stringBuilder.Append(c);
-                        }
-
-                        break;
+                        stringBuilder.Append(c);
                     }
+
+                    break;
+                }
             }
         }
 

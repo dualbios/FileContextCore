@@ -1,15 +1,22 @@
-﻿using Microsoft.EntityFrameworkCore.Diagnostics;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using FileStoreCore.Extensions;
+using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
-using Microsoft.EntityFrameworkCore.InMemory.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore;
 using System.Collections;
-using FileStoreCore.Extensions;
 
-namespace FileStoreCore.Infrastructure;
+namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 
-public partial class FileStoreShapedQueryCompilingExpressionVisitor
+/// <summary>
+///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
+///     the same compatibility standards as public APIs. It may be changed or removed without notice in
+///     any release. You should only use it directly in your code with extreme caution and knowing that
+///     doing so can result in application failures when updating to a new Entity Framework Core release.
+/// </summary>
+public partial class InMemoryShapedQueryCompilingExpressionVisitor
 {
     private sealed class QueryingEnumerable<T> : IAsyncEnumerable<T>, IEnumerable<T>, IQueryingEnumerable
     {
@@ -48,7 +55,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             => GetEnumerator();
 
         public string ToQueryString()
-            => InMemoryStrings.NoQueryStrings;
+            => "InMemoryStrings.NoQueryStrings";
 
         private sealed class Enumerator : IEnumerator<T>, IAsyncEnumerator<T>
         {
@@ -185,5 +192,4 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
                 => throw new NotSupportedException(CoreStrings.EnumerableResetNotSupported);
         }
     }
-
 }

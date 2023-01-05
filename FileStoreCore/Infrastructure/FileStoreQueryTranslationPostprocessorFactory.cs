@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+﻿using FileStoreCore.Extensions;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace FileStoreCore.Infrastructure;
 
@@ -11,7 +12,7 @@ public class FileStoreQueryTranslationPostprocessorFactory : IQueryTranslationPo
         _dependencies = dependencies;
     }
 
-    public QueryTranslationPostprocessor Create(QueryCompilationContext queryCompilationContext)
+    public virtual QueryTranslationPostprocessor Create(QueryCompilationContext queryCompilationContext)
     {
         return new FileStoreQueryTranslationPostprocessor(_dependencies, queryCompilationContext);
     }

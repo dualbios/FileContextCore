@@ -1,16 +1,17 @@
-﻿using FileStoreCore.Extensions;
-using FileStoreCore.Infrastructure;
+// Licensed to the .NET Foundation under one or more agreements.
+// The .NET Foundation licenses this file to you under the MIT license.
+
+using FileStoreCore.Extensions;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Linq.Expressions;
 using System.Reflection;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions;
-using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 
-namespace FileStoreCore.Infrastructure;
+namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 
 /// <summary>
 ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -18,11 +19,11 @@ namespace FileStoreCore.Infrastructure;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMethodTranslatingExpressionVisitor
+public class InMemoryQueryableMethodTranslatingExpressionVisitor : QueryableMethodTranslatingExpressionVisitor
 {
-    private readonly FileStoreExpressionTranslatingExpressionVisitor _expressionTranslator;
+    private readonly InMemoryExpressionTranslatingExpressionVisitor _expressionTranslator;
     private readonly SharedTypeEntityExpandingExpressionVisitor _weakEntityExpandingExpressionVisitor;
-    private readonly FileStoreProjectionBindingExpressionVisitor _projectionBindingExpressionVisitor;
+    private readonly InMemoryProjectionBindingExpressionVisitor _projectionBindingExpressionVisitor;
     private readonly IModel _model;
 
     /// <summary>
@@ -31,14 +32,14 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public FileStoreQueryableMethodTranslatingExpressionVisitor(
+    public InMemoryQueryableMethodTranslatingExpressionVisitor(
         QueryableMethodTranslatingExpressionVisitorDependencies dependencies,
         QueryCompilationContext queryCompilationContext)
         : base(dependencies, queryCompilationContext, subquery: false)
     {
-        _expressionTranslator = new FileStoreExpressionTranslatingExpressionVisitor(queryCompilationContext, this);
+        _expressionTranslator = new InMemoryExpressionTranslatingExpressionVisitor(queryCompilationContext, this);
         _weakEntityExpandingExpressionVisitor = new SharedTypeEntityExpandingExpressionVisitor(_expressionTranslator);
-        _projectionBindingExpressionVisitor = new FileStoreProjectionBindingExpressionVisitor(this, _expressionTranslator);
+        _projectionBindingExpressionVisitor = new InMemoryProjectionBindingExpressionVisitor(this, _expressionTranslator);
         _model = queryCompilationContext.Model;
     }
 
@@ -48,13 +49,13 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    protected FileStoreQueryableMethodTranslatingExpressionVisitor(
-        FileStoreQueryableMethodTranslatingExpressionVisitor parentVisitor)
+    protected InMemoryQueryableMethodTranslatingExpressionVisitor(
+        InMemoryQueryableMethodTranslatingExpressionVisitor parentVisitor)
         : base(parentVisitor.Dependencies, parentVisitor.QueryCompilationContext, subquery: true)
     {
-        _expressionTranslator = new FileStoreExpressionTranslatingExpressionVisitor(QueryCompilationContext, parentVisitor);
+        _expressionTranslator = new InMemoryExpressionTranslatingExpressionVisitor(QueryCompilationContext, parentVisitor);
         _weakEntityExpandingExpressionVisitor = new SharedTypeEntityExpandingExpressionVisitor(_expressionTranslator);
-        _projectionBindingExpressionVisitor = new FileStoreProjectionBindingExpressionVisitor(this, _expressionTranslator);
+        _projectionBindingExpressionVisitor = new InMemoryProjectionBindingExpressionVisitor(this, _expressionTranslator);
         _model = parentVisitor._model;
     }
 
@@ -65,7 +66,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     protected override QueryableMethodTranslatingExpressionVisitor CreateSubqueryVisitor()
-        => new FileStoreQueryableMethodTranslatingExpressionVisitor(this);
+        => new InMemoryQueryableMethodTranslatingExpressionVisitor(this);
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -80,11 +81,11 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             case GroupByShaperExpression groupByShaperExpression:
                 var groupShapedQueryExpression = groupByShaperExpression.GroupingEnumerable;
 
-                return ((FileStoreQueryExpression)groupShapedQueryExpression.QueryExpression)
+                return ((InMemoryQueryExpression)groupShapedQueryExpression.QueryExpression)
                     .Clone(groupShapedQueryExpression.ShaperExpression);
 
             case ShapedQueryExpression shapedQueryExpression:
-                return ((FileStoreQueryExpression)shapedQueryExpression.QueryExpression)
+                return ((InMemoryQueryExpression)shapedQueryExpression.QueryExpression)
                     .Clone(shapedQueryExpression.ShaperExpression);
 
             default:
@@ -123,7 +124,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
     private static ShapedQueryExpression CreateShapedQueryExpressionStatic(IEntityType entityType)
     {
-        var queryExpression = new FileStoreQueryExpression(entityType);
+        var queryExpression = new InMemoryQueryExpression(entityType);
 
         return new ShapedQueryExpression(
             queryExpression,
@@ -153,20 +154,20 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         source = newSource;
 
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         if (source.ShaperExpression is GroupByShaperExpression)
         {
-            fileStoreQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
+            inMemoryQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
         }
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Not(
                 Expression.Call(
-                    EnumerableMethods.AnyWithoutPredicate.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                    fileStoreQueryExpression.ServerQueryExpression)));
+                    EnumerableMethods.AnyWithoutPredicate.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                    inMemoryQueryExpression.ServerQueryExpression)));
 
-        return source.UpdateShaperExpression(Expression.Convert(fileStoreQueryExpression.GetSingleScalarProjection(), typeof(bool)));
+        return source.UpdateShaperExpression(Expression.Convert(inMemoryQueryExpression.GetSingleScalarProjection(), typeof(bool)));
     }
 
     /// <summary>
@@ -188,19 +189,19 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             source = newSource;
         }
 
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         if (source.ShaperExpression is GroupByShaperExpression)
         {
-            fileStoreQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
+            inMemoryQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
         }
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                EnumerableMethods.AnyWithoutPredicate.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression));
+                EnumerableMethods.AnyWithoutPredicate.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression));
 
-        return source.UpdateShaperExpression(Expression.Convert(fileStoreQueryExpression.GetSingleScalarProjection(), typeof(bool)));
+        return source.UpdateShaperExpression(Expression.Convert(inMemoryQueryExpression.GetSingleScalarProjection(), typeof(bool)));
     }
 
     /// <summary>
@@ -243,7 +244,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     /// </summary>
     protected override ShapedQueryExpression? TranslateContains(ShapedQueryExpression source, Expression item)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
         var newItem = TranslateExpression(item, preserveType: true);
         if (newItem == null)
         {
@@ -252,19 +253,19 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         item = newItem;
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
                 EnumerableMethods.Contains.MakeGenericMethod(item.Type),
                 Expression.Call(
-                    EnumerableMethods.Select.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type, item.Type),
-                    fileStoreQueryExpression.ServerQueryExpression,
+                    EnumerableMethods.Select.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type, item.Type),
+                    inMemoryQueryExpression.ServerQueryExpression,
                     Expression.Lambda(
-                        fileStoreQueryExpression.GetProjection(
-                            new ProjectionBindingExpression(fileStoreQueryExpression, new ProjectionMember(), item.Type)),
-                        fileStoreQueryExpression.CurrentParameter)),
+                        inMemoryQueryExpression.GetProjection(
+                            new ProjectionBindingExpression(inMemoryQueryExpression, new ProjectionMember(), item.Type)),
+                        inMemoryQueryExpression.CurrentParameter)),
                 item));
 
-        return source.UpdateShaperExpression(Expression.Convert(fileStoreQueryExpression.GetSingleScalarProjection(), typeof(bool)));
+        return source.UpdateShaperExpression(Expression.Convert(inMemoryQueryExpression.GetSingleScalarProjection(), typeof(bool)));
     }
 
     /// <summary>
@@ -286,19 +287,19 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             source = newSource;
         }
 
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         if (source.ShaperExpression is GroupByShaperExpression)
         {
-            fileStoreQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
+            inMemoryQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
         }
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                EnumerableMethods.CountWithoutPredicate.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression));
+                EnumerableMethods.CountWithoutPredicate.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression));
 
-        return source.UpdateShaperExpression(Expression.Convert(fileStoreQueryExpression.GetSingleScalarProjection(), typeof(int)));
+        return source.UpdateShaperExpression(Expression.Convert(inMemoryQueryExpression.GetSingleScalarProjection(), typeof(int)));
     }
 
     /// <summary>
@@ -311,7 +312,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     {
         if (defaultValue == null)
         {
-            ((FileStoreQueryExpression)source.QueryExpression).ApplyDefaultIfEmpty();
+            ((InMemoryQueryExpression)source.QueryExpression).ApplyDefaultIfEmpty();
             return source.UpdateShaperExpression(MarkShaperNullable(source.ShaperExpression));
         }
 
@@ -326,7 +327,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     /// </summary>
     protected override ShapedQueryExpression? TranslateDistinct(ShapedQueryExpression source)
     {
-        ((FileStoreQueryExpression)source.QueryExpression).ApplyDistinct();
+        ((InMemoryQueryExpression)source.QueryExpression).ApplyDistinct();
 
         return source;
     }
@@ -388,14 +389,14 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         var translatedKey = TranslateGroupingKey(remappedKeySelector);
         if (translatedKey != null)
         {
-            var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+            var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
             var defaultElementSelector = elementSelector == null || elementSelector.Body == elementSelector.Parameters[0];
             if (!defaultElementSelector)
             {
                 source = TranslateSelect(source, elementSelector!);
             }
 
-            var groupByShaper = fileStoreQueryExpression.ApplyGrouping(translatedKey, source.ShaperExpression, defaultElementSelector);
+            var groupByShaper = inMemoryQueryExpression.ApplyGrouping(translatedKey, source.ShaperExpression, defaultElementSelector);
 
             if (resultSelector == null)
             {
@@ -409,8 +410,8 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
                 new Expression[] { original1, original2 },
                 new[] { groupByShaper.KeySelector, groupByShaper }).Visit(resultSelector.Body);
 
-            newResultSelectorBody = ExpandSharedTypeEntities(fileStoreQueryExpression, newResultSelectorBody);
-            var newShaper = _projectionBindingExpressionVisitor.Translate(fileStoreQueryExpression, newResultSelectorBody);
+            newResultSelectorBody = ExpandSharedTypeEntities(inMemoryQueryExpression, newResultSelectorBody);
+            var newShaper = _projectionBindingExpressionVisitor.Translate(inMemoryQueryExpression, newResultSelectorBody);
 
             return source.UpdateShaperExpression(newShaper);
         }
@@ -527,8 +528,8 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         (outerKeySelector, innerKeySelector) = (newOuterKeySelector, newInnerKeySelector);
 
-        var outerShaperExpression = ((FileStoreQueryExpression)outer.QueryExpression).AddInnerJoin(
-            (FileStoreQueryExpression)inner.QueryExpression,
+        var outerShaperExpression = ((InMemoryQueryExpression)outer.QueryExpression).AddInnerJoin(
+            (InMemoryQueryExpression)inner.QueryExpression,
             outerKeySelector,
             innerKeySelector,
             outer.ShaperExpression,
@@ -558,8 +559,8 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             return (null, null);
         }
 
-        outerKeySelector = Expression.Lambda(outerKeyBody, ((FileStoreQueryExpression)outer.QueryExpression).CurrentParameter);
-        innerKeySelector = Expression.Lambda(innerKeyBody, ((FileStoreQueryExpression)inner.QueryExpression).CurrentParameter);
+        outerKeySelector = Expression.Lambda(outerKeyBody, ((InMemoryQueryExpression)outer.QueryExpression).CurrentParameter);
+        innerKeySelector = Expression.Lambda(innerKeyBody, ((InMemoryQueryExpression)inner.QueryExpression).CurrentParameter);
 
         return AlignKeySelectorTypes(outerKeySelector, innerKeySelector);
     }
@@ -689,8 +690,8 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         (outerKeySelector, innerKeySelector) = (newOuterKeySelector, newInnerKeySelector);
 
-        var outerShaperExpression = ((FileStoreQueryExpression)outer.QueryExpression).AddLeftJoin(
-            (FileStoreQueryExpression)inner.QueryExpression,
+        var outerShaperExpression = ((InMemoryQueryExpression)outer.QueryExpression).AddLeftJoin(
+            (InMemoryQueryExpression)inner.QueryExpression,
             outerKeySelector,
             innerKeySelector,
             outer.ShaperExpression,
@@ -720,20 +721,20 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             source = newSource;
         }
 
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         if (source.ShaperExpression is GroupByShaperExpression)
         {
-            fileStoreQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
+            inMemoryQueryExpression.ReplaceProjection(new Dictionary<ProjectionMember, Expression>());
         }
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
                 EnumerableMethods.LongCountWithoutPredicate.MakeGenericMethod(
-                    fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression));
+                    inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression));
 
-        return source.UpdateShaperExpression(Expression.Convert(fileStoreQueryExpression.GetSingleScalarProjection(), typeof(long)));
+        return source.UpdateShaperExpression(Expression.Convert(inMemoryQueryExpression.GetSingleScalarProjection(), typeof(long)));
     }
 
     /// <summary>
@@ -791,15 +792,15 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             }
 
             var derivedType = entityType.GetDerivedTypes().Single(et => et.ClrType == resultType);
-            var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+            var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
             var projectionBindingExpression = (ProjectionBindingExpression)entityShaperExpression.ValueBufferExpression;
             var projectionMember = projectionBindingExpression.ProjectionMember;
             //Check.DebugAssert(new ProjectionMember().Equals(projectionMember), "Invalid ProjectionMember when processing OfType");
 
             var entityProjectionExpression =
-                (Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)fileStoreQueryExpression.GetProjection(projectionBindingExpression);
-            fileStoreQueryExpression.ReplaceProjection(
+                (EntityProjectionExpression)inMemoryQueryExpression.GetProjection(projectionBindingExpression);
+            inMemoryQueryExpression.ReplaceProjection(
                 new Dictionary<ProjectionMember, Expression>
                 {
                     { projectionMember, entityProjectionExpression.UpdateEntityType(derivedType) }
@@ -822,7 +823,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         LambdaExpression keySelector,
         bool ascending)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         var newKeySelector = TranslateLambdaExpression(source, keySelector);
         if (newKeySelector == null)
@@ -833,10 +834,10 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         keySelector = newKeySelector;
 
         var orderBy = ascending ? EnumerableMethods.OrderBy : EnumerableMethods.OrderByDescending;
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                orderBy.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type, keySelector.ReturnType),
-                fileStoreQueryExpression.ServerQueryExpression,
+                orderBy.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type, keySelector.ReturnType),
+                inMemoryQueryExpression.ServerQueryExpression,
                 keySelector));
 
         return source;
@@ -850,12 +851,12 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     /// </summary>
     protected override ShapedQueryExpression? TranslateReverse(ShapedQueryExpression source)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                EnumerableMethods.Reverse.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression));
+                EnumerableMethods.Reverse.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression));
 
         return source;
     }
@@ -874,7 +875,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         }
 
         var newSelectorBody = RemapLambdaBody(source, selector);
-        var queryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var queryExpression = (InMemoryQueryExpression)source.QueryExpression;
         var newShaper = _projectionBindingExpressionVisitor.Translate(queryExpression, newSelectorBody);
 
         return source.UpdateShaperExpression(newShaper);
@@ -896,8 +897,8 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         if (Visit(collectionSelectorBody) is ShapedQueryExpression inner)
         {
-            var outerShaperExpression = ((FileStoreQueryExpression)source.QueryExpression).AddSelectMany(
-                (FileStoreQueryExpression)inner.QueryExpression, source.ShaperExpression, inner.ShaperExpression, defaultIfEmpty);
+            var outerShaperExpression = ((InMemoryQueryExpression)source.QueryExpression).AddSelectMany(
+                (InMemoryQueryExpression)inner.QueryExpression, source.ShaperExpression, inner.ShaperExpression, defaultIfEmpty);
 
             source = source.UpdateShaperExpression(outerShaperExpression);
 
@@ -974,7 +975,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     /// </summary>
     protected override ShapedQueryExpression? TranslateSkip(ShapedQueryExpression source, Expression count)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
         var newCount = TranslateExpression(count);
         if (newCount == null)
         {
@@ -983,10 +984,10 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         count = newCount;
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                EnumerableMethods.Skip.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression,
+                EnumerableMethods.Skip.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression,
                 count));
 
         return source;
@@ -1018,7 +1019,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     /// </summary>
     protected override ShapedQueryExpression? TranslateTake(ShapedQueryExpression source, Expression count)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
         var newCount = TranslateExpression(count);
         if (newCount == null)
         {
@@ -1027,10 +1028,10 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         count = newCount;
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                EnumerableMethods.Take.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression,
+                EnumerableMethods.Take.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression,
                 count));
 
         return source;
@@ -1056,7 +1057,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         LambdaExpression keySelector,
         bool ascending)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
         var newKeySelector = TranslateLambdaExpression(source, keySelector);
         if (newKeySelector == null)
         {
@@ -1065,11 +1066,11 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         keySelector = newKeySelector;
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
                 (ascending ? EnumerableMethods.ThenBy : EnumerableMethods.ThenByDescending)
-                .MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type, keySelector.ReturnType),
-                fileStoreQueryExpression.ServerQueryExpression,
+                .MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type, keySelector.ReturnType),
+                inMemoryQueryExpression.ServerQueryExpression,
                 keySelector));
 
         return source;
@@ -1092,7 +1093,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
     /// </summary>
     protected override ShapedQueryExpression? TranslateWhere(ShapedQueryExpression source, LambdaExpression predicate)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
         var newPredicate = TranslateLambdaExpression(source, predicate, preserveType: true);
         if (newPredicate == null)
         {
@@ -1101,10 +1102,10 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
 
         predicate = newPredicate;
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
+        inMemoryQueryExpression.UpdateServerQueryExpression(
             Expression.Call(
-                EnumerableMethods.Where.MakeGenericMethod(fileStoreQueryExpression.CurrentParameter.Type),
-                fileStoreQueryExpression.ServerQueryExpression,
+                EnumerableMethods.Where.MakeGenericMethod(inMemoryQueryExpression.CurrentParameter.Type),
+                inMemoryQueryExpression.ServerQueryExpression,
                 predicate));
 
         return source;
@@ -1141,7 +1142,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         return lambdaBody != null
             ? Expression.Lambda(
                 lambdaBody,
-                ((FileStoreQueryExpression)shapedQueryExpression.QueryExpression).CurrentParameter)
+                ((InMemoryQueryExpression)shapedQueryExpression.QueryExpression).CurrentParameter)
             : null;
     }
 
@@ -1150,19 +1151,19 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         var lambdaBody = ReplacingExpressionVisitor.Replace(
             lambdaExpression.Parameters.Single(), shapedQueryExpression.ShaperExpression, lambdaExpression.Body);
 
-        return ExpandSharedTypeEntities((FileStoreQueryExpression)shapedQueryExpression.QueryExpression, lambdaBody);
+        return ExpandSharedTypeEntities((InMemoryQueryExpression)shapedQueryExpression.QueryExpression, lambdaBody);
     }
 
-    private Expression ExpandSharedTypeEntities(FileStoreQueryExpression queryExpression, Expression lambdaBody)
+    private Expression ExpandSharedTypeEntities(InMemoryQueryExpression queryExpression, Expression lambdaBody)
         => _weakEntityExpandingExpressionVisitor.Expand(queryExpression, lambdaBody);
 
     private sealed class SharedTypeEntityExpandingExpressionVisitor : ExpressionVisitor
     {
-        private readonly FileStoreExpressionTranslatingExpressionVisitor _expressionTranslator;
+        private readonly InMemoryExpressionTranslatingExpressionVisitor _expressionTranslator;
 
-        private FileStoreQueryExpression _queryExpression;
+        private InMemoryQueryExpression _queryExpression;
 
-        public SharedTypeEntityExpandingExpressionVisitor(FileStoreExpressionTranslatingExpressionVisitor expressionTranslator)
+        public SharedTypeEntityExpandingExpressionVisitor(InMemoryExpressionTranslatingExpressionVisitor expressionTranslator)
         {
             _expressionTranslator = expressionTranslator;
             _queryExpression = null!;
@@ -1171,7 +1172,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         public string? TranslationErrorDetails
             => _expressionTranslator.TranslationErrorDetails;
 
-        public Expression Expand(FileStoreQueryExpression queryExpression, Expression lambdaBody)
+        public Expression Expand(InMemoryQueryExpression queryExpression, Expression lambdaBody)
         {
             _queryExpression = queryExpression;
 
@@ -1246,7 +1247,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             if (navigation.IsCollection)
             {
                 var innerShapedQuery = CreateShapedQueryExpressionStatic(targetEntityType);
-                var innerQueryExpression = (FileStoreQueryExpression)innerShapedQuery.QueryExpression;
+                var innerQueryExpression = (InMemoryQueryExpression)innerShapedQuery.QueryExpression;
 
                 var makeNullable = foreignKey.PrincipalKey.Properties
                     .Concat(foreignKey.Properties)
@@ -1292,15 +1293,15 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
                 return innerShapedQuery;
             }
 
-            Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression entityProjectionExpression =
+            var entityProjectionExpression =
                 entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression
-                    ? (Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression)_queryExpression.GetProjection(projectionBindingExpression)
-                    : (Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression)entityShaperExpression.ValueBufferExpression;
+                    ? (EntityProjectionExpression)_queryExpression.GetProjection(projectionBindingExpression)
+                    : (EntityProjectionExpression)entityShaperExpression.ValueBufferExpression;
             var innerShaper = entityProjectionExpression.BindNavigation(navigation);
             if (innerShaper == null)
             {
                 var innerShapedQuery = CreateShapedQueryExpressionStatic(targetEntityType);
-                var innerQueryExpression = (FileStoreQueryExpression)innerShapedQuery.QueryExpression;
+                var innerQueryExpression = (InMemoryQueryExpression)innerShapedQuery.QueryExpression;
 
                 var makeNullable = foreignKey.PrincipalKey.Properties
                     .Concat(foreignKey.Properties)
@@ -1366,19 +1367,19 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         string methodName,
         Type returnType)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         selector = selector == null
             || selector.Body == selector.Parameters[0]
                 ? Expression.Lambda(
-                    fileStoreQueryExpression.GetProjection(
+                    inMemoryQueryExpression.GetProjection(
                         new ProjectionBindingExpression(
-                            fileStoreQueryExpression, new ProjectionMember(), returnType)),
-                    fileStoreQueryExpression.CurrentParameter)
+                            inMemoryQueryExpression, new ProjectionMember(), returnType)),
+                    inMemoryQueryExpression.CurrentParameter)
                 : TranslateLambdaExpression(source, selector, preserveType: true);
 
         if (selector == null
-            || selector.Body is Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)
+            || selector.Body is EntityProjectionExpression)
         {
             return null;
         }
@@ -1388,10 +1389,10 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             ? method.MakeGenericMethod(typeof(ValueBuffer), selector.ReturnType)
             : method.MakeGenericMethod(typeof(ValueBuffer));
 
-        fileStoreQueryExpression.UpdateServerQueryExpression(
-            Expression.Call(method, fileStoreQueryExpression.ServerQueryExpression, selector));
+        inMemoryQueryExpression.UpdateServerQueryExpression(
+            Expression.Call(method, inMemoryQueryExpression.ServerQueryExpression, selector));
 
-        return source.UpdateShaperExpression(Expression.Convert(fileStoreQueryExpression.GetSingleScalarProjection(), returnType));
+        return source.UpdateShaperExpression(Expression.Convert(inMemoryQueryExpression.GetSingleScalarProjection(), returnType));
 
         MethodInfo GetMethod()
             => methodName switch
@@ -1400,7 +1401,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
                 nameof(Enumerable.Max) => EnumerableMethods.GetMaxWithSelector(selector.ReturnType),
                 nameof(Enumerable.Min) => EnumerableMethods.GetMinWithSelector(selector.ReturnType),
                 nameof(Enumerable.Sum) => EnumerableMethods.GetSumWithSelector(selector.ReturnType),
-                _ => throw new InvalidOperationException("Aggregate Operator")
+                _ => throw new InvalidOperationException("CoreStrings.UnknownEntity(\"Aggregate Operator\")")
             };
     }
 
@@ -1410,7 +1411,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         Type returnType,
         MethodInfo method)
     {
-        var fileStoreQueryExpression = (FileStoreQueryExpression)source.QueryExpression;
+        var inMemoryQueryExpression = (InMemoryQueryExpression)source.QueryExpression;
 
         if (predicate != null)
         {
@@ -1423,7 +1424,7 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
             source = newSource;
         }
 
-        fileStoreQueryExpression.ConvertToSingleResult(method);
+        inMemoryQueryExpression.ConvertToSingleResult(method);
 
         return source.ShaperExpression.Type != returnType
             ? source.UpdateShaperExpression(Expression.Convert(source.ShaperExpression, returnType))
@@ -1435,8 +1436,8 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
         ShapedQueryExpression source1,
         ShapedQueryExpression source2)
     {
-        var inMemoryQueryExpression1 = (FileStoreQueryExpression)source1.QueryExpression;
-        var inMemoryQueryExpression2 = (FileStoreQueryExpression)source2.QueryExpression;
+        var inMemoryQueryExpression1 = (InMemoryQueryExpression)source1.QueryExpression;
+        var inMemoryQueryExpression2 = (InMemoryQueryExpression)source2.QueryExpression;
 
         inMemoryQueryExpression1.ApplySetOperation(setOperationMethodInfo, inMemoryQueryExpression2);
 
