@@ -5,8 +5,14 @@ namespace FileStoreCore.Infrastructure;
 
 public class FileStoreQueryableMethodTranslatingExpressionVisitorFactory : IQueryableMethodTranslatingExpressionVisitorFactory
 {
+    private readonly QueryableMethodTranslatingExpressionVisitorDependencies _dependencies;
+
+    public FileStoreQueryableMethodTranslatingExpressionVisitorFactory(QueryableMethodTranslatingExpressionVisitorDependencies dependencies)
+    {
+        _dependencies = dependencies;
+    }
     public QueryableMethodTranslatingExpressionVisitor Create(QueryCompilationContext queryCompilationContext)
     {
-        throw new NotImplementedException();
+        return new FileStoreQueryableMethodTranslatingExpressionVisitor(_dependencies, queryCompilationContext);
     }
 }

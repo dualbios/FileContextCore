@@ -31,6 +31,9 @@
 	  <Reference Include="Microsoft.EntityFrameworkCore.Analyzers">
 	    <HintPath>..\..\efcore\artifacts\bin\EFCore.Relational\Debug\net6.0\Microsoft.EntityFrameworkCore.Analyzers.dll</HintPath>
 	  </Reference>
+	  <Reference Include="Microsoft.EntityFrameworkCore.InMemory">
+	    <HintPath>..\..\efcore\artifacts\bin\EFCore.InMemory\Debug\net6.0\Microsoft.EntityFrameworkCore.InMemory.dll</HintPath>
+	  </Reference>
 	  <Reference Include="Microsoft.EntityFrameworkCore.Relational">
 	    <HintPath>..\..\efcore\artifacts\bin\EFCore.Relational\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
 	  </Reference>
