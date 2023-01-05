@@ -1292,10 +1292,10 @@ public class FileStoreQueryableMethodTranslatingExpressionVisitor : QueryableMet
                 return innerShapedQuery;
             }
 
-            var entityProjectionExpression =
+            Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression entityProjectionExpression =
                 entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression
-                    ? (Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)_queryExpression.GetProjection(projectionBindingExpression)
-                    : (Microsoft.EntityFrameworkCore.Query.EntityProjectionExpression)entityShaperExpression.ValueBufferExpression;
+                    ? (Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression)_queryExpression.GetProjection(projectionBindingExpression)
+                    : (Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression)entityShaperExpression.ValueBufferExpression;
             var innerShaper = entityProjectionExpression.BindNavigation(navigation);
             if (innerShaper == null)
             {

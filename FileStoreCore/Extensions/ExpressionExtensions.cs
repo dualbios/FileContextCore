@@ -1,9 +1,25 @@
-﻿using System.Linq.Expressions;
+﻿using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Storage;
+using System.Linq.Expressions;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace FileStoreCore.Extensions;
 
 public static class ExpressionExtensions
 {
+    public static readonly MethodInfo ValueBufferTryReadValueMethod
+        = typeof(ExpressionExtensions).GetTypeInfo().GetDeclaredMethod(nameof(ValueBufferTryReadValue))!;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private static TValue ValueBufferTryReadValue<TValue>(
+#pragma warning disable IDE0060 // Remove unused parameter
+        in ValueBuffer valueBuffer,
+        int index,
+        IPropertyBase property)
+#pragma warning restore IDE0060 // Remove unused parameter
+        => (TValue)valueBuffer[index]!;
+
     public static Expression? UnwrapTypeConversion(this Expression? expression, out Type? convertedType)
     {
         convertedType = null;

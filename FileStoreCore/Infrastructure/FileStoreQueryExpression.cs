@@ -1,17 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
+using FileStoreCore.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Query.Internal;
 using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using Microsoft.EntityFrameworkCore.Storage;
+using EntityProjectionExpression = Microsoft.EntityFrameworkCore.InMemory.Query.Internal.EntityProjectionExpression;
 
 namespace FileStoreCore.Infrastructure;
 
@@ -27,7 +31,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
         .GetDeclaredMethods(nameof(LeftJoin)).Single(mi => mi.GetParameters().Length == 6);
 
     private static readonly ConstructorInfo ResultEnumerableConstructor
-        = typeof(ResultEnumerable).GetConstructors().Single();
+        = typeof(FileStoreResultEnumerable).GetConstructors().Single();
 
     private readonly ParameterExpression _valueBufferParameter;
     private ParameterExpression? _groupingParameter;
@@ -57,7 +61,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
     public FileStoreQueryExpression(IEntityType entityType)
     {
         _valueBufferParameter = Parameter(typeof(ValueBuffer), "valueBuffer");
-        ServerQueryExpression = new FileStoreQueryExpression(entityType);
+        ServerQueryExpression = new FileStoreTableExpression(entityType);
         var propertyExpressionsMap = new Dictionary<IProperty, MethodCallExpression>();
         var selectorExpressions = new List<Expression>();
         foreach (var property in entityType.GetAllBaseTypesInclusive().SelectMany(et => et.GetDeclaredProperties()))
@@ -65,9 +69,9 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
             var propertyExpression = CreateReadValueExpression(property.ClrType, property.GetIndex(), property);
             selectorExpressions.Add(propertyExpression);
 
-            Check.DebugAssert(
-                property.GetIndex() == selectorExpressions.Count - 1,
-                "Properties should be ordered in same order as their indexes.");
+            //Check.DebugAssert(
+            //    property.GetIndex() == selectorExpressions.Count - 1,
+            //    "Properties should be ordered in same order as their indexes.");
             propertyExpressionsMap[property] = propertyExpression;
             _projectionMappingExpressions.Add(propertyExpression);
         }
@@ -373,7 +377,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
     /// </summary>
     public virtual void ApplySetOperation(MethodInfo setOperationMethodInfo, FileStoreQueryExpression source2)
     {
-        Check.DebugAssert(_groupingParameter == null, "Cannot apply set operation after GroupBy without flattening.");
+        //Check.DebugAssert(_groupingParameter == null, "Cannot apply set operation after GroupBy without flattening.");
         if (_clientProjections.Count == 0)
         {
             var projectionMapping = new Dictionary<ProjectionMember, Expression>();
@@ -447,7 +451,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
         }
         else
         {
-            throw new InvalidOperationException(InMemoryStrings.SetOperationsNotAllowedAfterClientEvaluation);
+            throw new InvalidOperationException("InMemoryStrings.SetOperationsNotAllowedAfterClientEvaluation");
         }
 
         ServerQueryExpression = Call(
@@ -464,7 +468,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
     {
         if (_clientProjections.Count != 0)
         {
-            throw new InvalidOperationException(InMemoryStrings.DefaultIfEmptyAppliedAfterProjection);
+            throw new InvalidOperationException("InMemoryStrings.DefaultIfEmptyAppliedAfterProjection");
         }
 
         var projectionMapping = new Dictionary<ProjectionMember, Expression>();
@@ -495,8 +499,8 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
     /// </summary>
     public virtual void ApplyDistinct()
     {
-        Check.DebugAssert(!_scalarServerQuery && _singleResultMethodInfo == null, "Cannot apply distinct on single result query");
-        Check.DebugAssert(_groupingParameter == null, "Cannot apply distinct after GroupBy before flattening.");
+        //Check.DebugAssert(!_scalarServerQuery && _singleResultMethodInfo == null, "Cannot apply distinct on single result query");
+        //Check.DebugAssert(_groupingParameter == null, "Cannot apply distinct after GroupBy before flattening.");
 
         var selectorExpressions = new List<Expression>();
         if (_clientProjections.Count == 0)
@@ -515,7 +519,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
                 var projection = _clientProjections[i];
                 if (projection is FileStoreQueryExpression)
                 {
-                    throw new InvalidOperationException(InMemoryStrings.DistinctOnSubqueryNotSupported);
+                    throw new InvalidOperationException("InMemoryStrings.DistinctOnSubqueryNotSupported");
                 }
 
                 if (projection is EntityProjectionExpression entityProjectionExpression)
@@ -666,7 +670,8 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
         LambdaExpression outerKeySelector,
         LambdaExpression innerKeySelector)
     {
-        Check.DebugAssert(_clientProjections.Count == 0, "Cannot expand weak entity navigation after client projection yet.");
+        //Check.DebugAssert(_clientProjections.Count == 0, "Cannot expand weak entity navigation after client projection yet.");
+
         var outerParameter = Parameter(typeof(ValueBuffer), "outer");
         var innerParameter = Parameter(typeof(ValueBuffer), "inner");
         var replacingVisitor = new ReplacingExpressionVisitor(
@@ -1149,7 +1154,7 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
     private static IPropertyBase? InferPropertyFromInner(Expression expression)
         => expression is MethodCallExpression methodCallExpression
             && methodCallExpression.Method.IsGenericMethod
-            && methodCallExpression.Method.GetGenericMethodDefinition() == ExpressionExtensions.ValueBufferTryReadValueMethod
+            && methodCallExpression.Method.GetGenericMethodDefinition() == Extensions.ExpressionExtensions.ValueBufferTryReadValueMethod
                 ? methodCallExpression.Arguments[2].GetConstantValue<IPropertyBase>()
                 : null;
 
@@ -1244,14 +1249,14 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
 
     private static MethodCallExpression MakeReadValueNullable(Expression expression)
     {
-        Check.DebugAssert(expression is MethodCallExpression, "Expression must be method call expression.");
+        //Check.DebugAssert(expression is MethodCallExpression, "Expression must be method call expression.");
 
         var methodCallExpression = (MethodCallExpression)expression;
 
         return methodCallExpression.Type.IsNullableType()
             ? methodCallExpression
             : Call(
-                ExpressionExtensions.ValueBufferTryReadValueMethod.MakeGenericMethod(methodCallExpression.Type.MakeNullable()),
+                Extensions.ExpressionExtensions.ValueBufferTryReadValueMethod.MakeGenericMethod(methodCallExpression.Type.MakeNullable()),
                 methodCallExpression.Arguments);
     }
 
@@ -1292,5 +1297,146 @@ public class FileStoreQueryExpression : Expression, IPrintableExpression
         }
 
         return result;
+    }
+
+    public class CloningExpressionVisitor : ExpressionVisitor
+    {
+        [return: NotNullIfNotNull("expression")]
+        public override Expression? Visit(Expression? expression)
+        {
+            if (expression is FileStoreQueryExpression inMemoryQueryExpression)
+            {
+                var clonedInMemoryQueryExpression = new FileStoreQueryExpression(
+                    inMemoryQueryExpression.ServerQueryExpression, inMemoryQueryExpression._valueBufferParameter)
+                {
+                    _groupingParameter = inMemoryQueryExpression._groupingParameter,
+                    _singleResultMethodInfo = inMemoryQueryExpression._singleResultMethodInfo,
+                    _scalarServerQuery = inMemoryQueryExpression._scalarServerQuery
+                };
+
+                clonedInMemoryQueryExpression._clientProjections.AddRange(
+                    inMemoryQueryExpression._clientProjections.Select(e => Visit(e)));
+                clonedInMemoryQueryExpression._projectionMappingExpressions.AddRange(
+                    inMemoryQueryExpression._projectionMappingExpressions);
+                foreach (var (projectionMember, value) in inMemoryQueryExpression._projectionMapping)
+                {
+                    clonedInMemoryQueryExpression._projectionMapping[projectionMember] = Visit(value);
+                }
+
+                return clonedInMemoryQueryExpression;
+            }
+
+            if (expression is EntityProjectionExpression entityProjectionExpression)
+            {
+                return entityProjectionExpression.Clone();
+            }
+
+            return base.Visit(expression);
+        }
+    }
+
+    private sealed class ProjectionIndexRemappingExpressionVisitor : ExpressionVisitor
+    {
+        private readonly Expression _oldExpression;
+        private readonly Expression _newExpression;
+        private readonly int[] _indexMap;
+
+        public ProjectionIndexRemappingExpressionVisitor(
+            Expression oldExpression,
+            Expression newExpression,
+            int[] indexMap)
+        {
+            _oldExpression = oldExpression;
+            _newExpression = newExpression;
+            _indexMap = indexMap;
+        }
+
+        [return: NotNullIfNotNull("expression")]
+        public override Expression? Visit(Expression? expression)
+        {
+            if (expression is ProjectionBindingExpression projectionBindingExpression
+                && ReferenceEquals(projectionBindingExpression.QueryExpression, _oldExpression))
+            {
+                //Check.DebugAssert(
+                //    projectionBindingExpression.Index != null,
+                //    "ProjectionBindingExpression must have index.");
+
+                return new ProjectionBindingExpression(
+                    _newExpression,
+                    _indexMap[projectionBindingExpression.Index.Value],
+                    projectionBindingExpression.Type);
+            }
+
+            return base.Visit(expression);
+        }
+    }
+    private sealed class ProjectionMemberToIndexConvertingExpressionVisitor : ExpressionVisitor
+    {
+        private readonly Expression _queryExpression;
+        private readonly Dictionary<ProjectionMember, int> _projectionMemberMappings;
+
+        public ProjectionMemberToIndexConvertingExpressionVisitor(
+            Expression queryExpression,
+            Dictionary<ProjectionMember, int> projectionMemberMappings)
+        {
+            _queryExpression = queryExpression;
+            _projectionMemberMappings = projectionMemberMappings;
+        }
+
+        [return: NotNullIfNotNull("expression")]
+        public override Expression? Visit(Expression? expression)
+        {
+            if (expression is ProjectionBindingExpression projectionBindingExpression)
+            {
+                //Check.DebugAssert(
+                //    projectionBindingExpression.ProjectionMember != null,
+                //    "ProjectionBindingExpression must have projection member.");
+
+                return new ProjectionBindingExpression(
+                    _queryExpression,
+                    _projectionMemberMappings[projectionBindingExpression.ProjectionMember],
+                    projectionBindingExpression.Type);
+            }
+
+            return base.Visit(expression);
+        }
+    }
+    private sealed class ProjectionMemberRemappingExpressionVisitor : ExpressionVisitor
+    {
+        private readonly Expression _queryExpression;
+        private readonly Dictionary<ProjectionMember, ProjectionMember> _projectionMemberMappings;
+
+        public ProjectionMemberRemappingExpressionVisitor(
+            Expression queryExpression,
+            Dictionary<ProjectionMember, ProjectionMember> projectionMemberMappings)
+        {
+            _queryExpression = queryExpression;
+            _projectionMemberMappings = projectionMemberMappings;
+        }
+
+        [return: NotNullIfNotNull("expression")]
+        public override Expression? Visit(Expression? expression)
+        {
+            if (expression is ProjectionBindingExpression projectionBindingExpression)
+            {
+                //Check.DebugAssert(
+                //    projectionBindingExpression.ProjectionMember != null,
+                //    "ProjectionBindingExpression must have projection member.");
+
+                return new ProjectionBindingExpression(
+                    _queryExpression,
+                    _projectionMemberMappings[projectionBindingExpression.ProjectionMember],
+                    projectionBindingExpression.Type);
+            }
+
+            return base.Visit(expression);
+        }
+    }
+    private sealed class EntityShaperNullableMarkingExpressionVisitor : ExpressionVisitor
+    {
+        protected override Expression VisitExtension(Expression extensionExpression)
+            => extensionExpression is EntityShaperExpression entityShaper
+                ? entityShaper.MakeNullable()
+                : base.VisitExtension(extensionExpression);
     }
 }
