@@ -12,4 +12,5 @@ public interface IFileStoreTable
     //IReadOnlyList<InMemoryTableSnapshot> GetTables(IEntityType entityType);
     IReadOnlyList<object[]> SnapshotRows();
     void Delete(IUpdateEntry entry);
+    void Update(IUpdateEntry entry);
 }

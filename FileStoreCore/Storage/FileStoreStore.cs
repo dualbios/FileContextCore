@@ -69,8 +69,8 @@ class FileStoreStore : IFileStoreStore
                     case EntityState.Deleted:
                         table.Delete(entry);
                         break;
-                        //case EntityState.Modified:
-                        //    table.Update(entry);
+                    case EntityState.Modified:
+                        table.Update(entry);
                         break;
                 }
 

@@ -29,8 +29,7 @@ namespace FileStoreCore.Example.Data
             modelBuilder.Entity<SimpleEntity>().Property(x => x.Id);
             modelBuilder.Entity<SimpleEntity>().Property(x => x.Name);
 
-            //modelBuilder.Entity<User>()
-            //    .ToTable("custom_user_table");
+            modelBuilder.Entity<SimpleEntity>().ToTable("custom_SimpleEntity_table");
         }
     }
 }

@@ -20,6 +20,9 @@ public class FileStoreTable<TKey> : IFileStoreTable
     private readonly ISerializer _serializer;
     private IPrincipalKeyValueFactory<TKey> _keyValueFactory = null;
 
+    private Dictionary<int, IFileStoreIntegerValueGenerator> _integerGenerators;
+
+
     public FileStoreTable(IEntityType entityType, FileStoreFileManager fileManager)
     {
         _entityType = entityType;
@@ -130,6 +133,61 @@ public class FileStoreTable<TKey> : IFileStoreTable
             //throw new DbUpdateConcurrencyException(FileContextStrings.UpdateConcurrencyException, new[] { entry });
         }
     }
+
+    public void Update(IUpdateEntry entry)
+    {
+        var key = CreateKey(entry);
+
+        if (_rows.ContainsKey(key))
+        {
+            var properties = entry.EntityType.GetProperties().ToList();
+            var comparers = GetStructuralComparers(properties);
+            var valueBuffer = new object[properties.Count];
+            var concurrencyConflicts = new Dictionary<IProperty, object>();
+
+            for (var index = 0; index < valueBuffer.Length; index++)
+            {
+                if (IsConcurrencyConflict(entry, properties[index], _rows[key][index], concurrencyConflicts))
+                {
+                    continue;
+                }
+
+                valueBuffer[index] = entry.IsModified(properties[index])
+                    ? SnapshotValue(properties[index], comparers[index], entry)
+                    : _rows[key][index];
+            }
+
+            if (concurrencyConflicts.Count > 0)
+            {
+                ThrowUpdateConcurrencyException(entry, concurrencyConflicts);
+            }
+
+            _rows[key] = valueBuffer;
+
+            //BumpValueGenerators(valueBuffer);
+        }
+        else
+        {
+            throw new DbUpdateConcurrencyException("FileContextStrings.UpdateConcurrencyException", new[] { entry });
+        }
+    }
+
+    private void BumpValueGenerators(object[] row)
+    {
+        if (_integerGenerators != null)
+        {
+            foreach (var generator in _integerGenerators.Values)
+            {
+                generator.Bump(row);
+            }
+        }
+    }
+
+    private static List<ValueComparer> GetStructuralComparers(IEnumerable<IProperty> properties)
+    {
+        return properties.Select(GetStructuralComparer).ToList();
+    }
+
 
     private static bool IsConcurrencyConflict(
         IUpdateEntry entry,

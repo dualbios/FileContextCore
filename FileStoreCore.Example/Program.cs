@@ -20,14 +20,25 @@ namespace FileStoreCore.Example
             //db.Users.Add(new User() { Name = "nnmnmn" });
 
 
-           // db.SimpleEntities.Load();
+            // db.SimpleEntities.Load();
 
             //db.SimpleEntities.Add(new SimpleEntity(){Id = 1, Name = "Name1"});
             //db.SimpleEntities.Add(new SimpleEntity(){Id = 2, Name = "Name2"});
             //db.SaveChanges();
+
+            SimpleEntity? entity = db.SimpleEntities.Local.FirstOrDefault(x => x.Name.Contains("2"));
+            if (entity != null)
+            {
+                db.SimpleEntities.Remove(entity);
+            }
+            else
+            {
+                db.SimpleEntities.Add(new SimpleEntity() { Id = 2, Name = "Name2" });
+            }
+
             
-            SimpleEntity entity = db.SimpleEntities.Local.Where(x=>x.Name.Contains("2")).FirstOrDefault();
-            db.SimpleEntities.Remove(entity);
+
+
             db.SaveChanges();
         }
     }
