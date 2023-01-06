@@ -41,6 +41,7 @@ public static class FileStoreServiceCollectionExtensions
                     .TryAddSingleton<FileStoreFileManager, FileStoreFileManager>()
                     .TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>()
                     .TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>()
+                    .TryAddSingleton<IFileStoreStore, FileStoreStore>()
                 );
                     //.TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>()
                     //.GetInfrastructure()

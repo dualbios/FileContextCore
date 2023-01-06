@@ -7,6 +7,7 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
+using FileStoreCore.Infrastructure;
 
 namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
 
@@ -80,8 +81,10 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQuery
     private static readonly MethodInfo TableMethodInfo
         = typeof(InMemoryShapedQueryCompilingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(Table))!;
 
-    //private static IEnumerable<ValueBuffer> Table(QueryContext queryContext, IEntityType entityType)
-    //    => ((InMemoryQueryContext)queryContext).GetValueBuffers(entityType);
     private static IEnumerable<ValueBuffer> Table(QueryContext queryContext, IEntityType entityType)
-        => Enumerable.Empty<ValueBuffer>();
+    {
+        return ((FileStoreQueryContext)queryContext).Store
+            .GetTables(entityType)
+            .SelectMany(t => t.Rows.Select(vs => new ValueBuffer(vs)));
+    }
 }

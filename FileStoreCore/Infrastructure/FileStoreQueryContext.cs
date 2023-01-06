@@ -1,10 +1,15 @@
-﻿using Microsoft.EntityFrameworkCore.Query;
+using FileStoreCore.Storage;
+using Microsoft.EntityFrameworkCore.Query;
 
 namespace FileStoreCore.Infrastructure;
 
-public class FileStoreQueryContext : QueryContext
+internal class FileStoreQueryContext : QueryContext
 {
-    public FileStoreQueryContext(QueryContextDependencies dependencies) : base(dependencies)
+    public IFileStoreStore Store { get; }
+
+    public FileStoreQueryContext(QueryContextDependencies dependencies, IFileStoreStore store) 
+        : base(dependencies)
     {
+        Store = store;
     }
 }

@@ -4,23 +4,19 @@ using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Update;
-using System.String;
+using System.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 
 namespace FileStoreCore.Storage;
-
-public interface IFileStoreTable
-{
-    void Create(IUpdateEntry entry);
-
-    void Save();
-}
 
 public class FileStoreTable<TKey> : IFileStoreTable
 {
     private readonly IEntityType _entityType;
     private readonly FileStoreFileManager _fileManager;
     private readonly IKey _primaryKey;
-    private readonly Dictionary<TKey, object[]> _rows = new Dictionary<TKey, object[]>();
+    private Dictionary<TKey, object[]> _rows = new Dictionary<TKey, object[]>();
     private readonly ISerializer _serializer;
     private IPrincipalKeyValueFactory<TKey> _keyValueFactory = null;
 
@@ -52,7 +48,7 @@ public class FileStoreTable<TKey> : IFileStoreTable
 
     public void Load()
     {
-        _fileManager.Load(_entityType, _rows, _serializer);
+        _rows = _fileManager.Load<TKey>(_entityType, _serializer);
     }
 
     public void Save()
@@ -101,45 +97,83 @@ public class FileStoreTable<TKey> : IFileStoreTable
     {
         return _keyValueFactory.CreateFromCurrentValues(entry);
     }
-}
 
-public class FileStoreFileManager
-{
-    private string _databasename = "";
-    private string _filetype = "json";
-    private string? _location;
-
-    public string GetFileName(IEntityType _entityType)
+    public virtual IReadOnlyList<object[]> SnapshotRows()
     {
-        string name = _entityType.GetTableName().GetValidFileName();
-
-        string path = string.IsNullOrEmpty(_location)
-            ? Path.Combine(AppContext.BaseDirectory, "appdata", _databasename)
-            : _location;
-
-        Directory.CreateDirectory(path);
-
-        return Path.Combine(path, name + "." + _filetype);
+        return new ReadOnlyCollection<object[]>(_rows.Values.ToList());
     }
 
-    public void Load<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> rows, ISerializer serializer)
+    public void Delete(IUpdateEntry entry)
     {
-        string path = GetFileName(_entityType);
+        var key = CreateKey(entry);
 
-        string content = "";
-        if (File.Exists(path))
+        if (_rows.TryGetValue(key, out object[] value))
         {
-            content = File.ReadAllText(path);
+            var properties = entry.EntityType.GetProperties().ToList();
+            var concurrencyConflicts = new Dictionary<IProperty, object>();
+
+            for (var index = 0; index < properties.Count; index++)
+            {
+                IsConcurrencyConflict(entry, properties[index], value[index], concurrencyConflicts);
+            }
+
+            if (concurrencyConflicts.Count > 0)
+            {
+                ThrowUpdateConcurrencyException(entry, concurrencyConflicts);
+            }
+
+            _rows.Remove(key);
+        }
+        else
+        {
+            throw new DbUpdateConcurrencyException("UpdateConcurrencyException", new[] { entry });
+            //throw new DbUpdateConcurrencyException(FileContextStrings.UpdateConcurrencyException, new[] { entry });
+        }
+    }
+
+    private static bool IsConcurrencyConflict(
+        IUpdateEntry entry,
+        IProperty property,
+        object rowValue,
+        Dictionary<IProperty, object> concurrencyConflicts)
+    {
+        if (property.IsConcurrencyToken
+            && !StructuralComparisons.StructuralEqualityComparer.Equals(
+                rowValue,
+                entry.GetOriginalValue(property)))
+        {
+            concurrencyConflicts.Add(property, rowValue);
+
+            return true;
         }
 
-        rows = new Dictionary<TKey, object[]>();
-        serializer.Deserialize(content, rows);
+        return false;
     }
 
-    public void Save<TKey>(IEntityType _entityType, Dictionary<TKey, object[]> objectsMap, ISerializer serializer)
+    /// <summary>
+    ///     Throws an exception indicating that concurrency conflicts were detected.
+    /// </summary>
+    /// <param name="entry"> The update entry which resulted in the conflict(s). </param>
+    /// <param name="concurrencyConflicts"> The conflicting properties with their associated database values. </param>
+    protected virtual void ThrowUpdateConcurrencyException([NotNull] IUpdateEntry entry, [NotNull] Dictionary<IProperty, object> concurrencyConflicts)
     {
-        string content = serializer.Serialize(objectsMap);
-        string path = GetFileName(_entityType);
-        File.WriteAllText(path, content);
+        //Check.NotNull(entry, nameof(entry));
+        //Check.NotNull(concurrencyConflicts, nameof(concurrencyConflicts));
+
+        //if (_sensitiveLoggingEnabled)
+        //{
+        //    throw new DbUpdateConcurrencyException(
+        //        FileContextStrings.UpdateConcurrencyTokenExceptionSensitive(
+        //            entry.EntityType.DisplayName(),
+        //            entry.BuildCurrentValuesString(entry.EntityType.FindPrimaryKey().Properties),
+        //            entry.BuildOriginalValuesString(concurrencyConflicts.Keys),
+        //            "{" + string.Join(", ", concurrencyConflicts.Select(c => c.Key.Name + ": " + Convert.ToString(c.Value, CultureInfo.InvariantCulture))) + "}"),
+        //        new[] { entry });
+        //}
+
+        throw new DbUpdateConcurrencyException(
+            //FileContextStrings.UpdateConcurrencyTokenException(entry.EntityType.DisplayName(), concurrencyConflicts.Keys.Format()),
+            $"{entry.EntityType.DisplayName()},{concurrencyConflicts.Keys.Format()}",
+            new[] { entry });
     }
 }
