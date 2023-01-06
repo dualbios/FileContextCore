@@ -21,6 +21,9 @@ public class FileStoreOptionsExtension : IDbContextOptionsExtension
         get { return new FileStoreOptionsExtensionInfo(this); }
     }
 
+    public string DatabaseName { get; set; }
+    public string Location { get; set; }
+
     public class FileStoreOptionsExtensionInfo : DbContextOptionsExtensionInfo
     {
         public FileStoreOptionsExtensionInfo(IDbContextOptionsExtension extension) : base(extension)

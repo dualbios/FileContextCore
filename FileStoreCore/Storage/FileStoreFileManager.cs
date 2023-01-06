@@ -1,15 +1,25 @@
 ﻿using System.String;
+using FileStoreCore.Infrastructure;
 using FileStoreCore.Serializers;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FileStoreCore.Storage;
 
-public class FileStoreFileManager
+public class FileStoreFileManager : IFileStoreFileManager
 {
     private string _databasename = "";
     private string _filetype = "json";
     private string? _location;
+
+    public FileStoreFileManager()
+    {
+    }
+
+    public void Init()
+    {
+    }
 
     public string GetFileName(IEntityType _entityType)
     {

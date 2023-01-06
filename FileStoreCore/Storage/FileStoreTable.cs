@@ -15,7 +15,7 @@ namespace FileStoreCore.Storage;
 public class FileStoreTable<TKey> : IFileStoreTable
 {
     private readonly IEntityType _entityType;
-    private readonly FileStoreFileManager _fileManager;
+    private readonly IFileStoreFileManager _fileManager;
     private readonly IKey _primaryKey;
     private Dictionary<TKey, object[]> _rows = new Dictionary<TKey, object[]>();
     private readonly ISerializer _serializer;
@@ -24,13 +24,15 @@ public class FileStoreTable<TKey> : IFileStoreTable
     private Dictionary<int, IFileStoreIntegerValueGenerator> _integerGenerators;
 
 
-    public FileStoreTable(IEntityType entityType, FileStoreFileManager fileManager)
+    public FileStoreTable(IEntityType entityType, IFileStoreFileManager fileManager)
     {
         _entityType = entityType;
         _fileManager = fileManager;
         _primaryKey = entityType.FindPrimaryKey();
         _keyValueFactory = _primaryKey.GetPrincipalKeyValueFactory<TKey>();
         _serializer = new JsonDataSerializer(entityType, _keyValueFactory);
+
+        _fileManager.Init();
 
         Load();
     }

@@ -38,7 +38,7 @@ public static class FileStoreServiceCollectionExtensions
 
             .TryAddProviderSpecificServices(
                 b => b
-                    .TryAddSingleton<FileStoreFileManager, FileStoreFileManager>()
+                    .TryAddSingleton<IFileStoreFileManager, FileStoreFileManager>()
                     .TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>()
                     .TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>()
                     .TryAddSingleton<IFileStoreStore, FileStoreStore>()

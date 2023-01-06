@@ -7,9 +7,9 @@ namespace FileStoreCore.Storage;
 
 public class FileStoreTableFactory
 {
-    private readonly FileStoreFileManager _fileManager;
+    private readonly IFileStoreFileManager _fileManager;
     private readonly ConcurrentDictionary<IKey, Func<IFileStoreTable>> _factories = new ConcurrentDictionary<IKey, Func<IFileStoreTable>>();
-    public FileStoreTableFactory(FileStoreFileManager fileManager)
+    public FileStoreTableFactory(IFileStoreFileManager fileManager)
     {
         _fileManager = fileManager;
     }

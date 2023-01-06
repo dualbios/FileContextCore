@@ -9,10 +9,14 @@ public static class FileStoreDbContextOptionsExtensions
     public static DbContextOptionsBuilder UseFileStoreDatabase(
         this DbContextOptionsBuilder optionsBuilder,
         string databaseName = "",
-        string location = null,
-        string password = null)
+        string location = null)
     {
-        var extension = optionsBuilder.Options.FindExtension<FileStoreOptionsExtension>() ?? new FileStoreOptionsExtension();
+        var extension = optionsBuilder.Options.FindExtension<FileStoreOptionsExtension>()
+                        ?? new FileStoreOptionsExtension()
+                        {
+                            DatabaseName = databaseName,
+                            Location = location
+                        };
 
         ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
 

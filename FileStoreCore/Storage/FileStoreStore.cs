@@ -9,6 +9,7 @@ namespace FileStoreCore.Storage;
 class FileStoreStore : IFileStoreStore
 {
     private readonly FileStoreTablesManager _fileStoreTablesManager;
+    private object _lock = new();
 
     public FileStoreStore(FileStoreTablesManager fileStoreTablesManager)
     {
@@ -18,13 +19,10 @@ class FileStoreStore : IFileStoreStore
     public IReadOnlyList<FileStoreTableSnapshot> GetTables(IEntityType entityType)
     {
         var data = new List<FileStoreTableSnapshot>();
-        //lock (_lock)
+        lock (_lock)
         {
             foreach (var et in entityType.GetDerivedTypesInclusive().Where(et => !et.IsAbstract()))
             {
-                //var key = _useNameMatching ? (object)et.Name : et;
-                //var table = EnsureTable(key, et);
-
                 IFileStoreTable table = _fileStoreTablesManager.GetorCreateTable(entityType);
                 data.Add(new FileStoreTableSnapshot(et, table.SnapshotRows()));
             }
@@ -38,7 +36,6 @@ class FileStoreStore : IFileStoreStore
         var rowsAffected = 0;
 
         {
-            // ReSharper disable once ForCanBeConvertedToForeach
             for (var i = 0; i < entries.Count; i++)
             {
                 var entry = entries[i];
@@ -46,9 +43,6 @@ class FileStoreStore : IFileStoreStore
 
                 Debug.Assert(!entityType.IsAbstract());
 
-                var key = /*_useNameMatching ? (object)entityType.Name :*/ entityType;
-                //var table = EnsureTable(key, entityType);
-                //string tableName = entityType.Name;
                 IFileStoreTable table = _fileStoreTablesManager.GetorCreateTable(entityType);
 
                 if (entry.SharedIdentityEntry != null)
@@ -58,7 +52,7 @@ class FileStoreStore : IFileStoreStore
                         continue;
                     }
 
-                    //table.Delete(entry);
+                    table.Delete(entry);
                 }
 
                 switch (entry.EntityState)
@@ -84,11 +78,6 @@ class FileStoreStore : IFileStoreStore
             {
                 table.Save();
             }
-
-            //foreach (KeyValuePair<object, IFileContextTable> table in _tables)
-            //{
-            //    table.Value.Save();
-            //}
         }
 
 
