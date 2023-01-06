@@ -6,6 +6,7 @@ using System.Text;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace FileStoreCore.Serializer
@@ -88,8 +89,7 @@ namespace FileStoreCore.Serializer
             return "";
         }
 
-        public static TKey GetKey<TKey>(object keyValueFactoryObject, IEntityType entityType,
-            Func<string, string> valueSelector)
+        public static TKey GetKey<TKey>(object keyValueFactoryObject, IEntityType entityType, Func<string, string> valueSelector)
         {
             IPrincipalKeyValueFactory<TKey> keyValueFactory = (IPrincipalKeyValueFactory<TKey>) keyValueFactoryObject;
             

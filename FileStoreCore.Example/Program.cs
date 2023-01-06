@@ -14,11 +14,13 @@ namespace FileStoreCore.Example
             //List<User> users = db.Users.Include(x=>x.Contents).ThenInclude(x=>x.Entries).ToList();
 
             ContentEntry entry = db.ContentEntries.FirstOrDefault();
-            db.Entry(entry).Reference(x=>x.Content).Load();
+            
+            db.Contents.Load();
             db.Users.Load();
             User user = db.Users.FirstOrDefault();
-            //string userName = entry.Content.User.Name;
 
+            user.Name = "changed name 2222";
+            db.SaveChanges();
 
             //InitDb(db);
         }

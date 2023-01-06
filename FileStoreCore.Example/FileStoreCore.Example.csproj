@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
@@ -8,25 +8,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FileStoreCore\FileStoreCore.csproj" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="7.0.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <Reference Include="Microsoft.EntityFrameworkCore">
-      <HintPath>..\..\efcore\artifacts\bin\EFCore\Debug\net6.0\Microsoft.EntityFrameworkCore.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Abstractions">
-      <HintPath>..\..\efcore\artifacts\bin\EFCore.Relational\Debug\net6.0\Microsoft.EntityFrameworkCore.Abstractions.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Analyzers">
-      <HintPath>..\..\efcore\artifacts\bin\EFCore.Relational\Debug\net6.0\Microsoft.EntityFrameworkCore.Analyzers.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.Relational">
-      <HintPath>..\..\efcore\artifacts\bin\EFCore.Relational\Debug\net6.0\Microsoft.EntityFrameworkCore.Relational.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.EntityFrameworkCore.InMemory">
-      <HintPath>..\..\efcore\artifacts\bin\EFCore.InMemory\Debug\net6.0\Microsoft.EntityFrameworkCore.InMemory.dll</HintPath>
-    </Reference>
+    <ProjectReference Include="..\FileStoreCore\FileStoreCore.csproj" />
   </ItemGroup>
 
 </Project>
