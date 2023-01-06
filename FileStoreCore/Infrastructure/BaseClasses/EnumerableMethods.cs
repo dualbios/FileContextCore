@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 
-namespace Microsoft.EntityFrameworkCore;
+namespace FileStoreCore.Infrastructure;
 
 internal static class EnumerableMethods
 {

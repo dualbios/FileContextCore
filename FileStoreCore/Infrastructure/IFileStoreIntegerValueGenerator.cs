@@ -1,4 +1,4 @@
-﻿namespace FileStoreCore;
+﻿namespace FileStoreCore.Infrastructure;
 
 public interface IFileStoreIntegerValueGenerator
 {

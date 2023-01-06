@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections.Generic;
 using System.Linq.Expressions;
 using System.Reflection;
-using FileStoreCore.Infrastructure;
+using Microsoft.EntityFrameworkCore;
 
-namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
+namespace FileStoreCore.Infrastructure.Query.Internal;
 
 public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQueryCompilingExpressionVisitor
 {

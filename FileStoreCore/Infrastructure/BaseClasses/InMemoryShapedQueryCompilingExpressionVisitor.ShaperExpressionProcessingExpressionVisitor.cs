@@ -10,7 +10,7 @@ using System.Linq.Expressions;
 using System.Reflection;
 using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.ExpressionExtensions;
 
-namespace Microsoft.EntityFrameworkCore.InMemory.Query.Internal;
+namespace FileStoreCore.Infrastructure.Query.Internal;
 
 public partial class InMemoryShapedQueryCompilingExpressionVisitor
 {

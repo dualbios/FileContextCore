@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
-using System.Globalization;
 
-namespace FileStoreCore;
+namespace FileStoreCore.Infrastructure;
 
 internal class FileStoreIntegerValueGenerator<TValue> : ValueGenerator<TValue>, IFileStoreIntegerValueGenerator
 {
