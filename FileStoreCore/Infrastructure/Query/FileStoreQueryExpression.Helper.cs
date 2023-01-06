@@ -9,7 +9,7 @@ using System.Linq.Expressions;
 
 namespace FileStoreCore.Infrastructure.Query.Internal;
 
-public partial class InMemoryQueryExpression
+public partial class FileStoreQueryExpression
 {
     private sealed class ResultEnumerable : IEnumerable<ValueBuffer>
     {
@@ -200,9 +200,9 @@ public partial class InMemoryQueryExpression
         [return: NotNullIfNotNull("expression")]
         public override Expression? Visit(Expression? expression)
         {
-            if (expression is InMemoryQueryExpression inMemoryQueryExpression)
+            if (expression is FileStoreQueryExpression inMemoryQueryExpression)
             {
-                var clonedInMemoryQueryExpression = new InMemoryQueryExpression(
+                var clonedInMemoryQueryExpression = new FileStoreQueryExpression(
                     inMemoryQueryExpression.ServerQueryExpression, inMemoryQueryExpression._valueBufferParameter)
                 {
                     _groupingParameter = inMemoryQueryExpression._groupingParameter,

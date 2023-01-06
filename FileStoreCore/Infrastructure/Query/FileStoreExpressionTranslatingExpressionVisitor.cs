@@ -25,7 +25,7 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
+public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
 {
     private const string RuntimeParameterPrefix = QueryCompilationContext.QueryParameterPrefix + "entity_equality_";
 
@@ -50,13 +50,13 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
     private static readonly MemberInfo ValueBufferIsEmpty = typeof(ValueBuffer).GetMember(nameof(ValueBuffer.IsEmpty))[0];
 
     private static readonly MethodInfo ParameterValueExtractorMethod =
-        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterValueExtractor))!;
+        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterValueExtractor))!;
 
     private static readonly MethodInfo ParameterListValueExtractorMethod =
-        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterListValueExtractor))!;
+        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(ParameterListValueExtractor))!;
 
     private static readonly MethodInfo GetParameterValueMethodInfo =
-        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(GetParameterValue))!;
+        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(GetParameterValue))!;
 
     private static readonly MethodInfo LikeMethodInfo = typeof(DbFunctionsExtensions).GetRuntimeMethod(
         nameof(DbFunctionsExtensions.Like), new[] { typeof(DbFunctions), typeof(string), typeof(string) })!;
@@ -71,7 +71,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
         nameof(Random.NextDouble), Type.EmptyTypes)!;
 
     private static readonly MethodInfo InMemoryLikeMethodInfo =
-        typeof(InMemoryExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(InMemoryLike))!;
+        typeof(FileStoreExpressionTranslatingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(InMemoryLike))!;
 
     private static readonly MethodInfo GetTypeMethodInfo = typeof(object).GetTypeInfo().GetDeclaredMethod(nameof(GetType))!;
 
@@ -98,7 +98,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public InMemoryExpressionTranslatingExpressionVisitor(
+    public FileStoreExpressionTranslatingExpressionVisitor(
         QueryCompilationContext queryCompilationContext,
         QueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor)
     {
@@ -469,7 +469,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
                 return new EntityReferenceExpression(entityShaperExpression);
 
             case ProjectionBindingExpression projectionBindingExpression:
-                return ((InMemoryQueryExpression)projectionBindingExpression.QueryExpression)
+                return ((FileStoreQueryExpression)projectionBindingExpression.QueryExpression)
                     .GetProjection(projectionBindingExpression);
 
             default:
@@ -646,7 +646,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
         var subqueryTranslation = _queryableMethodTranslatingExpressionVisitor.TranslateSubquery(methodCallExpression);
         if (subqueryTranslation != null)
         {
-            var subquery = (InMemoryQueryExpression)subqueryTranslation.QueryExpression;
+            var subquery = (FileStoreQueryExpression)subqueryTranslation.QueryExpression;
             if (subqueryTranslation.ResultCardinality == ResultCardinality.Enumerable)
             {
                 return QueryCompilationContext.NotTranslatedExpression;
@@ -1131,7 +1131,7 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
         if (entityReferenceExpression.SubqueryEntity != null)
         {
             var entityShaper = (EntityShaperExpression)entityReferenceExpression.SubqueryEntity.ShaperExpression;
-            var inMemoryQueryExpression = (InMemoryQueryExpression)entityReferenceExpression.SubqueryEntity.QueryExpression;
+            var inMemoryQueryExpression = (FileStoreQueryExpression)entityReferenceExpression.SubqueryEntity.QueryExpression;
 
             var projectionBindingExpression = (ProjectionBindingExpression)entityShaper.ValueBufferExpression;
             var entityProjectionExpression = (EntityProjectionExpression)inMemoryQueryExpression.GetProjection(
@@ -1148,21 +1148,21 @@ public class InMemoryExpressionTranslatingExpressionVisitor : ExpressionVisitor
     }
 
     private static Expression ProcessSingleResultScalar(
-        InMemoryQueryExpression inMemoryQueryExpression,
+        FileStoreQueryExpression fileStoreQueryExpression,
         Expression readValueExpression,
         Type type)
     {
-        if (inMemoryQueryExpression.ServerQueryExpression is not NewExpression)
+        if (fileStoreQueryExpression.ServerQueryExpression is not NewExpression)
         {
             // The terminating operator is not applied
             // It is of FirstOrDefault kind
             // So we change to single column projection and then apply it.
-            inMemoryQueryExpression.ReplaceProjection(
+            fileStoreQueryExpression.ReplaceProjection(
                 new Dictionary<ProjectionMember, Expression> { { new ProjectionMember(), readValueExpression } });
-            inMemoryQueryExpression.ApplyProjection();
+            fileStoreQueryExpression.ApplyProjection();
         }
 
-        var serverQuery = inMemoryQueryExpression.ServerQueryExpression;
+        var serverQuery = fileStoreQueryExpression.ServerQueryExpression;
         serverQuery = ((LambdaExpression)((NewExpression)serverQuery).Arguments[0]).Body;
         if (serverQuery is UnaryExpression unaryExpression
             && unaryExpression.NodeType == ExpressionType.Convert

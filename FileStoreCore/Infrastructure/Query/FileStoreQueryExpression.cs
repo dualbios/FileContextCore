@@ -18,7 +18,7 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public partial class InMemoryQueryExpression : Expression, IPrintableExpression
+public partial class FileStoreQueryExpression : Expression, IPrintableExpression
 {
     private static readonly ConstructorInfo ValueBufferConstructor
         = typeof(ValueBuffer).GetConstructors().Single(ci => ci.GetParameters().Length == 1);
@@ -26,7 +26,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     private static readonly PropertyInfo ValueBufferCountMemberInfo
         = typeof(ValueBuffer).GetTypeInfo().GetProperty(nameof(ValueBuffer.Count))!;
 
-    private static readonly MethodInfo LeftJoinMethodInfo = typeof(InMemoryQueryExpression).GetTypeInfo()
+    private static readonly MethodInfo LeftJoinMethodInfo = typeof(FileStoreQueryExpression).GetTypeInfo()
         .GetDeclaredMethods(nameof(LeftJoin)).Single(mi => mi.GetParameters().Length == 6);
 
     private static readonly ConstructorInfo ResultEnumerableConstructor
@@ -43,7 +43,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     private readonly List<Expression> _clientProjections = new();
     private readonly List<Expression> _projectionMappingExpressions = new();
 
-    private InMemoryQueryExpression(
+    private FileStoreQueryExpression(
         Expression serverQueryExpression,
         ParameterExpression valueBufferParameter)
     {
@@ -57,10 +57,10 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public InMemoryQueryExpression(IEntityType entityType)
+    public FileStoreQueryExpression(IEntityType entityType)
     {
         _valueBufferParameter = Parameter(typeof(ValueBuffer), "valueBuffer");
-        ServerQueryExpression = new InMemoryTableExpression(entityType);
+        ServerQueryExpression = new FileStoreTableExpression(entityType);
         var propertyExpressionsMap = new Dictionary<IProperty, MethodCallExpression>();
         var selectorExpressions = new List<Expression>();
         foreach (var property in entityType.GetAllBaseTypesInclusive().SelectMany(et => et.GetDeclaredProperties()))
@@ -282,7 +282,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
                         break;
                     }
 
-                    case InMemoryQueryExpression inMemoryQueryExpression:
+                    case FileStoreQueryExpression inMemoryQueryExpression:
                     {
                         var singleResult = inMemoryQueryExpression._scalarServerQuery
                             || inMemoryQueryExpression._singleResultMethodInfo != null;
@@ -374,7 +374,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual void ApplySetOperation(MethodInfo setOperationMethodInfo, InMemoryQueryExpression source2)
+    public virtual void ApplySetOperation(MethodInfo setOperationMethodInfo, FileStoreQueryExpression source2)
     {
         //Check.DebugAssert(_groupingParameter == null, "Cannot apply set operation after GroupBy without flattening.");
         if (_clientProjections.Count == 0)
@@ -516,7 +516,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
             for (var i = 0; i < _clientProjections.Count; i++)
             {
                 var projection = _clientProjections[i];
-                if (projection is InMemoryQueryExpression)
+                if (projection is FileStoreQueryExpression)
                 {
                     throw new InvalidOperationException("InMemoryStrings.DistinctOnSubqueryNotSupported");
                 }
@@ -618,7 +618,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual Expression AddInnerJoin(
-        InMemoryQueryExpression innerQueryExpression,
+        FileStoreQueryExpression innerQueryExpression,
         LambdaExpression outerKeySelector,
         LambdaExpression innerKeySelector,
         Expression outerShaperExpression,
@@ -634,7 +634,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual Expression AddLeftJoin(
-        InMemoryQueryExpression innerQueryExpression,
+        FileStoreQueryExpression innerQueryExpression,
         LambdaExpression outerKeySelector,
         LambdaExpression innerKeySelector,
         Expression outerShaperExpression,
@@ -650,7 +650,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     public virtual Expression AddSelectMany(
-        InMemoryQueryExpression innerQueryExpression,
+        FileStoreQueryExpression innerQueryExpression,
         Expression outerShaperExpression,
         Expression innerShaperExpression,
         bool innerNullable)
@@ -665,7 +665,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     public virtual EntityShaperExpression AddNavigationToWeakEntityType(
         EntityProjectionExpression entityProjectionExpression,
         INavigation navigation,
-        InMemoryQueryExpression innerQueryExpression,
+        FileStoreQueryExpression innerQueryExpression,
         LambdaExpression outerKeySelector,
         LambdaExpression innerKeySelector)
     {
@@ -794,7 +794,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     /// </summary>
     void IPrintableExpression.Print(ExpressionPrinter expressionPrinter)
     {
-        expressionPrinter.AppendLine(nameof(InMemoryQueryExpression) + ": ");
+        expressionPrinter.AppendLine(nameof(FileStoreQueryExpression) + ": ");
         using (expressionPrinter.Indent())
         {
             expressionPrinter.AppendLine(nameof(ServerQueryExpression) + ": ");
@@ -835,11 +835,11 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
         }
     }
 
-    private InMemoryQueryExpression Clone()
+    private FileStoreQueryExpression Clone()
     {
         _cloningExpressionVisitor ??= new CloningExpressionVisitor();
 
-        return (InMemoryQueryExpression)_cloningExpressionVisitor.Visit(this);
+        return (FileStoreQueryExpression)_cloningExpressionVisitor.Visit(this);
     }
 
     private static Expression GetGroupingKey(Expression key, List<Expression> groupingExpressions, Expression groupingKeyAccessExpression)
@@ -878,7 +878,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
 
             case EntityShaperExpression entityShaperExpression
                 when entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression:
-                var entityProjectionExpression = (EntityProjectionExpression)((InMemoryQueryExpression)projectionBindingExpression.QueryExpression)
+                var entityProjectionExpression = (EntityProjectionExpression)((FileStoreQueryExpression)projectionBindingExpression.QueryExpression)
                     .GetProjection(projectionBindingExpression);
                 var readExpressions = new Dictionary<IProperty, MethodCallExpression>();
                 foreach (var property in GetAllPropertiesInHierarchy(entityProjectionExpression.EntityType))
@@ -903,7 +903,7 @@ public partial class InMemoryQueryExpression : Expression, IPrintableExpression
     }
 
     private Expression AddJoin(
-        InMemoryQueryExpression innerQueryExpression,
+        FileStoreQueryExpression innerQueryExpression,
         LambdaExpression? outerKeySelector,
         LambdaExpression? innerKeySelector,
         Expression outerShaperExpression,

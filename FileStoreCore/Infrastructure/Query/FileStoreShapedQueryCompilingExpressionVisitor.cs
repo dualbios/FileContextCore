@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace FileStoreCore.Infrastructure.Query.Internal;
 
-public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQueryCompilingExpressionVisitor
+public partial class FileStoreShapedQueryCompilingExpressionVisitor : ShapedQueryCompilingExpressionVisitor
 {
     private readonly Type _contextType;
     private readonly bool _threadSafetyChecksEnabled;
@@ -22,7 +22,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQuery
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public InMemoryShapedQueryCompilingExpressionVisitor(
+    public FileStoreShapedQueryCompilingExpressionVisitor(
         ShapedQueryCompilingExpressionVisitorDependencies dependencies,
         QueryCompilationContext queryCompilationContext)
         : base(dependencies, queryCompilationContext)
@@ -41,7 +41,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQuery
     {
         switch (extensionExpression)
         {
-            case InMemoryTableExpression inMemoryTableExpression:
+            case FileStoreTableExpression inMemoryTableExpression:
                 return Expression.Call(
                     TableMethodInfo,
                     QueryCompilationContext.QueryContextParameter,
@@ -59,7 +59,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQuery
     /// </summary>
     protected override Expression VisitShapedQuery(ShapedQueryExpression shapedQueryExpression)
     {
-        var inMemoryQueryExpression = (InMemoryQueryExpression)shapedQueryExpression.QueryExpression;
+        var inMemoryQueryExpression = (FileStoreQueryExpression)shapedQueryExpression.QueryExpression;
         inMemoryQueryExpression.ApplyProjection();
 
         var shaperExpression = new ShaperExpressionProcessingExpressionVisitor(
@@ -79,7 +79,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor : ShapedQuery
     }
 
     private static readonly MethodInfo TableMethodInfo
-        = typeof(InMemoryShapedQueryCompilingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(Table))!;
+        = typeof(FileStoreShapedQueryCompilingExpressionVisitor).GetTypeInfo().GetDeclaredMethod(nameof(Table))!;
 
     private static IEnumerable<ValueBuffer> Table(QueryContext queryContext, IEntityType entityType)
     {

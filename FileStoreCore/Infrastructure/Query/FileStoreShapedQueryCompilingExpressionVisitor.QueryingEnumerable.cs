@@ -17,7 +17,7 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public partial class InMemoryShapedQueryCompilingExpressionVisitor
+public partial class FileStoreShapedQueryCompilingExpressionVisitor
 {
     private sealed class QueryingEnumerable<T> : IAsyncEnumerable<T>, IEnumerable<T>, IQueryingEnumerable
     {

@@ -14,7 +14,7 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class InMemoryTableExpression : Expression, IPrintableExpression
+public class FileStoreTableExpression : Expression, IPrintableExpression
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -22,7 +22,7 @@ public class InMemoryTableExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public InMemoryTableExpression(IEntityType entityType)
+    public FileStoreTableExpression(IEntityType entityType)
     {
         EntityType = entityType;
     }
@@ -69,5 +69,5 @@ public class InMemoryTableExpression : Expression, IPrintableExpression
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
     void IPrintableExpression.Print(ExpressionPrinter expressionPrinter)
-        => expressionPrinter.Append(nameof(InMemoryTableExpression) + ": Entity: " + EntityType.DisplayName());
+        => expressionPrinter.Append(nameof(FileStoreTableExpression) + ": Entity: " + EntityType.DisplayName());
 }

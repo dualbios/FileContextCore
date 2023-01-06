@@ -32,8 +32,8 @@ public static class FileStoreServiceCollectionExtensions
             .TryAdd<ITypeMappingSource, FileStoreTypeMappingSource>()
 
             //// New Query pipeline
-            .TryAdd<IShapedQueryCompilingExpressionVisitorFactory, InMemoryShapedQueryCompilingExpressionVisitorFactory>()
-            .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, InMemoryQueryableMethodTranslatingExpressionVisitorFactory>()
+            .TryAdd<IShapedQueryCompilingExpressionVisitorFactory, FileStoreShapedQueryCompilingExpressionVisitorFactory>()
+            .TryAdd<IQueryableMethodTranslatingExpressionVisitorFactory, FileStoreQueryableMethodTranslatingExpressionVisitorFactory>()
             .TryAdd<IQueryTranslationPostprocessorFactory, FileStoreQueryTranslationPostprocessorFactory>()
 
             .TryAddProviderSpecificServices(

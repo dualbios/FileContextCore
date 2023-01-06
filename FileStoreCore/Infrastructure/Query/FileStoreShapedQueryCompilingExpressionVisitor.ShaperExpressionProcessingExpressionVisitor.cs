@@ -12,7 +12,7 @@ using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.Expres
 
 namespace FileStoreCore.Infrastructure.Query.Internal;
 
-public partial class InMemoryShapedQueryCompilingExpressionVisitor
+public partial class FileStoreShapedQueryCompilingExpressionVisitor
 {
     private sealed class ShaperExpressionProcessingExpressionVisitor : ExpressionVisitor
     {
@@ -31,7 +31,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
         private static readonly MethodInfo CollectionAccessorAddMethodInfo
             = typeof(IClrCollectionAccessor).GetTypeInfo().GetDeclaredMethod(nameof(IClrCollectionAccessor.Add))!;
 
-        private readonly InMemoryShapedQueryCompilingExpressionVisitor _inMemoryShapedQueryCompilingExpressionVisitor;
+        private readonly FileStoreShapedQueryCompilingExpressionVisitor _fileStoreShapedQueryCompilingExpressionVisitor;
         private readonly bool _tracking;
         private ParameterExpression? _valueBufferParameter;
 
@@ -41,20 +41,20 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
         private readonly Dictionary<ParameterExpression, Dictionary<IProperty, int>> _materializationContextBindings = new();
 
         public ShaperExpressionProcessingExpressionVisitor(
-            InMemoryShapedQueryCompilingExpressionVisitor inMemoryShapedQueryCompilingExpressionVisitor,
-            InMemoryQueryExpression inMemoryQueryExpression,
+            FileStoreShapedQueryCompilingExpressionVisitor fileStoreShapedQueryCompilingExpressionVisitor,
+            FileStoreQueryExpression fileStoreQueryExpression,
             bool tracking)
         {
-            _inMemoryShapedQueryCompilingExpressionVisitor = inMemoryShapedQueryCompilingExpressionVisitor;
-            _valueBufferParameter = inMemoryQueryExpression.CurrentParameter;
+            _fileStoreShapedQueryCompilingExpressionVisitor = fileStoreShapedQueryCompilingExpressionVisitor;
+            _valueBufferParameter = fileStoreQueryExpression.CurrentParameter;
             _tracking = tracking;
         }
 
         private ShaperExpressionProcessingExpressionVisitor(
-            InMemoryShapedQueryCompilingExpressionVisitor inMemoryShapedQueryCompilingExpressionVisitor,
+            FileStoreShapedQueryCompilingExpressionVisitor fileStoreShapedQueryCompilingExpressionVisitor,
             bool tracking)
         {
-            _inMemoryShapedQueryCompilingExpressionVisitor = inMemoryShapedQueryCompilingExpressionVisitor;
+            _fileStoreShapedQueryCompilingExpressionVisitor = fileStoreShapedQueryCompilingExpressionVisitor;
             _tracking = tracking;
         }
 
@@ -82,7 +82,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
                         variable = Expression.Parameter(entityShaperExpression.EntityType.ClrType);
                         _variables.Add(variable);
                         var innerShaper =
-                            _inMemoryShapedQueryCompilingExpressionVisitor.InjectEntityMaterializers(entityShaperExpression);
+                            _fileStoreShapedQueryCompilingExpressionVisitor.InjectEntityMaterializers(entityShaperExpression);
                         innerShaper = Visit(innerShaper);
                         _expressions.Add(Expression.Assign(variable, innerShaper));
                         _mapping[key] = variable;
@@ -98,7 +98,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
                     {
                         variable = Expression.Parameter(projectionBindingExpression.Type);
                         _variables.Add(variable);
-                        var queryExpression = (InMemoryQueryExpression)projectionBindingExpression.QueryExpression;
+                        var queryExpression = (FileStoreQueryExpression)projectionBindingExpression.QueryExpression;
                         _valueBufferParameter ??= queryExpression.CurrentParameter;
 
                         var projectionIndex = queryExpression.GetProjection(projectionBindingExpression).GetConstantValue<int>();
@@ -131,7 +131,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
                     {
                         var collectionResultShaperExpression = (CollectionResultShaperExpression)includeExpression.NavigationExpression;
                         var shaperLambda = new ShaperExpressionProcessingExpressionVisitor(
-                                _inMemoryShapedQueryCompilingExpressionVisitor, _tracking)
+                                _fileStoreShapedQueryCompilingExpressionVisitor, _tracking)
                             .ProcessShaper(collectionResultShaperExpression.InnerShaper);
                         _expressions.Add(
                             Expression.Call(
@@ -178,7 +178,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
                     var collectionType = collectionAccessor?.CollectionType ?? collectionResultShaperExpression.Type;
                     var elementType = collectionResultShaperExpression.ElementType;
                     var shaperLambda = new ShaperExpressionProcessingExpressionVisitor(
-                            _inMemoryShapedQueryCompilingExpressionVisitor, _tracking)
+                            _fileStoreShapedQueryCompilingExpressionVisitor, _tracking)
                         .ProcessShaper(collectionResultShaperExpression.InnerShaper);
 
                     return Expression.Call(
@@ -192,7 +192,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
                 case SingleResultShaperExpression singleResultShaperExpression:
                 {
                     var shaperLambda = new ShaperExpressionProcessingExpressionVisitor(
-                            _inMemoryShapedQueryCompilingExpressionVisitor, _tracking)
+                            _fileStoreShapedQueryCompilingExpressionVisitor, _tracking)
                         .ProcessShaper(singleResultShaperExpression.InnerShaper);
 
                     return Expression.Call(
@@ -215,7 +215,7 @@ public partial class InMemoryShapedQueryCompilingExpressionVisitor
                 var newExpression = (NewExpression)binaryExpression.Right;
 
                 var projectionBindingExpression = (ProjectionBindingExpression)newExpression.Arguments[0];
-                var queryExpression = (InMemoryQueryExpression)projectionBindingExpression.QueryExpression;
+                var queryExpression = (FileStoreQueryExpression)projectionBindingExpression.QueryExpression;
                 _valueBufferParameter ??= queryExpression.CurrentParameter;
 
                 _materializationContextBindings[parameterExpression]

@@ -11,7 +11,7 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class InMemoryShapedQueryCompilingExpressionVisitorFactory : IShapedQueryCompilingExpressionVisitorFactory
+public class FileStoreQueryableMethodTranslatingExpressionVisitorFactory : IQueryableMethodTranslatingExpressionVisitorFactory
 {
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -19,8 +19,8 @@ public class InMemoryShapedQueryCompilingExpressionVisitorFactory : IShapedQuery
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public InMemoryShapedQueryCompilingExpressionVisitorFactory(
-        ShapedQueryCompilingExpressionVisitorDependencies dependencies)
+    public FileStoreQueryableMethodTranslatingExpressionVisitorFactory(
+        QueryableMethodTranslatingExpressionVisitorDependencies dependencies)
     {
         Dependencies = dependencies;
     }
@@ -28,7 +28,7 @@ public class InMemoryShapedQueryCompilingExpressionVisitorFactory : IShapedQuery
     /// <summary>
     ///     Dependencies for this service.
     /// </summary>
-    protected virtual ShapedQueryCompilingExpressionVisitorDependencies Dependencies { get; }
+    protected virtual QueryableMethodTranslatingExpressionVisitorDependencies Dependencies { get; }
 
     /// <summary>
     ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
@@ -36,6 +36,6 @@ public class InMemoryShapedQueryCompilingExpressionVisitorFactory : IShapedQuery
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual ShapedQueryCompilingExpressionVisitor Create(QueryCompilationContext queryCompilationContext)
-        => new InMemoryShapedQueryCompilingExpressionVisitor(Dependencies, queryCompilationContext);
+    public virtual QueryableMethodTranslatingExpressionVisitor Create(QueryCompilationContext queryCompilationContext)
+        => new FileStoreQueryableMethodTranslatingExpressionVisitor(Dependencies, queryCompilationContext);
 }

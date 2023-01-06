@@ -14,12 +14,12 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 ///     any release. You should only use it directly in your code with extreme caution and knowing that
 ///     doing so can result in application failures when updating to a new Entity Framework Core release.
 /// </summary>
-public class InMemoryProjectionBindingExpressionVisitor : ExpressionVisitor
+public class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
 {
-    private readonly InMemoryQueryableMethodTranslatingExpressionVisitor _queryableMethodTranslatingExpressionVisitor;
-    private readonly InMemoryExpressionTranslatingExpressionVisitor _expressionTranslatingExpressionVisitor;
+    private readonly FileStoreQueryableMethodTranslatingExpressionVisitor _queryableMethodTranslatingExpressionVisitor;
+    private readonly FileStoreExpressionTranslatingExpressionVisitor _expressionTranslatingExpressionVisitor;
 
-    private InMemoryQueryExpression _queryExpression;
+    private FileStoreQueryExpression _queryExpression;
     private bool _indexBasedBinding;
 
     private Dictionary<EntityProjectionExpression, ProjectionBindingExpression>? _entityProjectionCache;
@@ -34,9 +34,9 @@ public class InMemoryProjectionBindingExpressionVisitor : ExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public InMemoryProjectionBindingExpressionVisitor(
-        InMemoryQueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor,
-        InMemoryExpressionTranslatingExpressionVisitor expressionTranslatingExpressionVisitor)
+    public FileStoreProjectionBindingExpressionVisitor(
+        FileStoreQueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor,
+        FileStoreExpressionTranslatingExpressionVisitor expressionTranslatingExpressionVisitor)
     {
         _queryableMethodTranslatingExpressionVisitor = queryableMethodTranslatingExpressionVisitor;
         _expressionTranslatingExpressionVisitor = expressionTranslatingExpressionVisitor;
@@ -49,7 +49,7 @@ public class InMemoryProjectionBindingExpressionVisitor : ExpressionVisitor
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual Expression Translate(InMemoryQueryExpression queryExpression, Expression expression)
+    public virtual Expression Translate(FileStoreQueryExpression queryExpression, Expression expression)
     {
         _queryExpression = queryExpression;
         _indexBasedBinding = false;
@@ -115,7 +115,7 @@ public class InMemoryProjectionBindingExpressionVisitor : ExpressionVisitor
                             return AddClientProjection(entityProjection, typeof(ValueBuffer));
                         }
 
-                        if (mappedProjection is not InMemoryQueryExpression)
+                        if (mappedProjection is not FileStoreQueryExpression)
                         {
                             return AddClientProjection(mappedProjection, expression.Type.MakeNullable());
                         }
@@ -262,7 +262,7 @@ public class InMemoryProjectionBindingExpressionVisitor : ExpressionVisitor
             if (entityShaperExpression.ValueBufferExpression is ProjectionBindingExpression projectionBindingExpression)
             {
                 entityProjectionExpression =
-                    (EntityProjectionExpression)((InMemoryQueryExpression)projectionBindingExpression.QueryExpression)
+                    (EntityProjectionExpression)((FileStoreQueryExpression)projectionBindingExpression.QueryExpression)
                     .GetProjection(projectionBindingExpression);
             }
             else
