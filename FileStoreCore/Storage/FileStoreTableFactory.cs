@@ -7,7 +7,6 @@ namespace FileStoreCore.Storage;
 public class FileStoreTableFactory : IFileStoreTableFactory
 {
     private readonly ConcurrentDictionary<(IEntityType EntityType, IFileStoreTable BaseTable), Func<IFileStoreTable>> _factories = new();
-    private readonly bool _nullabilityCheckEnabled;
     private readonly IFileStoreScopedOptions _options;
     private readonly IServiceProvider _serviceProvider;
 

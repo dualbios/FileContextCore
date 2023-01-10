@@ -7,7 +7,6 @@ namespace FileStoreCore.Infrastructure;
 
 public class FileStoreOptionsExtension : IDbContextOptionsExtension
 {
-    private readonly bool _nullabilityCheckEnabled;
     private readonly FileStoreScopedOptions _options = new();
 
     public FileStoreOptionsExtension(string databaseName = null, string location = null)
@@ -19,7 +18,7 @@ public class FileStoreOptionsExtension : IDbContextOptionsExtension
 
     public DbContextOptionsExtensionInfo Info => new FileStoreOptionsExtensionInfo(this);
 
-    public virtual bool IsNullabilityCheckEnabled => _nullabilityCheckEnabled;
+    public virtual bool IsNullabilityCheckEnabled => false;
 
     public FileStoreScopedOptions Options => _options;
 

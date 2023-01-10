@@ -2,7 +2,7 @@
 
 internal static class DisposableExtensions
 {
-    public static ValueTask DisposeAsyncIfAvailable(this IDisposable? disposable)
+    public static ValueTask DisposeAsyncIfAvailable(this IDisposable disposable)
     {
         if (disposable != null)
         {
