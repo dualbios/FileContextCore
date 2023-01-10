@@ -11,23 +11,10 @@ public static class FileStoreDbContextOptionsExtensions
         string databaseName = "",
         string location = null)
     {
-        var extension = optionsBuilder.Options.FindExtension<FileStoreOptionsExtension>()
-                        ?? new FileStoreOptionsExtension()
-                        {
-                            StoreName = databaseName,
-                            Location = location
-                        };
+        var extension = optionsBuilder.Options.FindExtension<FileStoreOptionsExtension>() ?? new FileStoreOptionsExtension(databaseName, location);
 
         ((IDbContextOptionsBuilderInfrastructure)optionsBuilder).AddOrUpdateExtension(extension);
 
         return optionsBuilder;
     }
-
-    //public static DbContextOptionsBuilder<TContext> UseInMemoryDatabase<TContext>(
-    //    this DbContextOptionsBuilder<TContext> optionsBuilder,
-    //    string databaseName,
-    //    Action<InMemoryDbContextOptionsBuilder>? inMemoryOptionsAction = null)
-    //    where TContext : DbContext
-        //=> (DbContextOptionsBuilder<TContext>)UseInMemoryDatabase(
-        //    (DbContextOptionsBuilder)optionsBuilder, databaseName, inMemoryOptionsAction);
 }

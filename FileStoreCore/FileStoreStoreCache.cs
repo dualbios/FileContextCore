@@ -5,18 +5,16 @@ namespace FileStoreCore;
 
 public class FileStoreStoreCache : IFileStoreStoreCache
 {
+    private readonly ConcurrentDictionary<IFileStoreScopedOptions, IFileStoreStore> _namedStores;
     private readonly IServiceProvider _serviceProvider;
 
-    //private readonly IFileStoreTableFactory _tableFactory;
     private readonly bool _useNameMatching;
-    private readonly ConcurrentDictionary<IFileStoreScopedOptions, IFileStoreStore> _namedStores;
 
     public FileStoreStoreCache(
         IServiceProvider serviceProvider,
         IFileStoreSingletonOptions? options)
     {
         _serviceProvider = serviceProvider;
-        //_tableFactory = tableFactory;
 
         if (options?.DatabaseRoot != null)
         {

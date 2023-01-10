@@ -7,13 +7,21 @@ namespace FileStoreCore.Infrastructure;
 
 public class FileStoreOptionsExtension : IDbContextOptionsExtension
 {
-    private bool _nullabilityCheckEnabled;
-    private FileStoreScopedOptions _options;
+    private readonly bool _nullabilityCheckEnabled;
+    private readonly FileStoreScopedOptions _options = new();
 
-    public FileStoreOptionsExtension()
+    public FileStoreOptionsExtension(string databaseName = null, string location = null)
     {
-        _options = new FileStoreScopedOptions();
+        _options = new(databaseName, location);
     }
+
+    public FileStoreDatabaseRoot? DatabaseRoot { get; set; }
+
+    public DbContextOptionsExtensionInfo Info => new FileStoreOptionsExtensionInfo(this);
+
+    public virtual bool IsNullabilityCheckEnabled => _nullabilityCheckEnabled;
+
+    public FileStoreScopedOptions Options => _options;
 
     public void ApplyServices(IServiceCollection services)
     {
@@ -22,29 +30,7 @@ public class FileStoreOptionsExtension : IDbContextOptionsExtension
 
     public void Validate(IDbContextOptions options)
     {
-        
     }
-
-    public DbContextOptionsExtensionInfo Info
-    {
-        get { return new FileStoreOptionsExtensionInfo(this); }
-    }
-
-    public string StoreName {
-        get
-        {
-            return Options.DatabaseName;
-        }
-        set
-        {
-            Options.DatabaseName = value;
-        }
-    }
-    public string Location { get; set; }
-    public virtual bool IsNullabilityCheckEnabled => _nullabilityCheckEnabled;
-
-    public FileStoreDatabaseRoot? DatabaseRoot { get; set; }
-    public virtual FileStoreScopedOptions Options => _options;
 
     public class FileStoreOptionsExtensionInfo : DbContextOptionsExtensionInfo
     {
@@ -52,14 +38,13 @@ public class FileStoreOptionsExtension : IDbContextOptionsExtension
         {
         }
 
+        public override bool IsDatabaseProvider { get; } = true;
+
+        public override string LogFragment { get; } = nameof(FileStoreOptionsExtensionInfo);
+
         public override int GetServiceProviderHashCode()
         {
             return this.GetHashCode();
-        }
-
-        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
-        {
-            return false;
         }
 
         public override void PopulateDebugInfo(IDictionary<string, string> debugInfo)
@@ -67,7 +52,9 @@ public class FileStoreOptionsExtension : IDbContextOptionsExtension
             debugInfo["FileStoreOptionsExtensionInfo:DebugInfo"] = GetServiceProviderHashCode().ToString();
         }
 
-        public override bool IsDatabaseProvider { get; } = true;
-        public override string LogFragment { get; } = nameof(FileStoreOptionsExtensionInfo);
+        public override bool ShouldUseSameServiceProvider(DbContextOptionsExtensionInfo other)
+        {
+            return false;
+        }
     }
 }

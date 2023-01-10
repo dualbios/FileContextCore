@@ -1,11 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Text;
-
-namespace System.String
+﻿namespace System.Text
 {
-    static class StringHelperExtensions
+    internal static class StringHelperExtensions
     {
         public static string GetValidFileName(this string input)
         {
@@ -15,7 +10,7 @@ namespace System.String
                 {
                     continue;
                 }
-                
+
                 input = input.Replace(c, '_');
             }
 

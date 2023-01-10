@@ -21,20 +21,6 @@ namespace FileStoreCore.Example.Data
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            //modelBuilder.Entity<SimpleEntity>().Property(x => x.Id);
-            //modelBuilder.Entity<SimpleEntity>().Property(x => x.Name);
-
-            //modelBuilder.Entity<SimpleEntity>().ToTable("custom_SimpleEntity_table");
-
-            //modelBuilder.Entity<Messurement>().Property(x => x.Id);
-            //modelBuilder.Entity<Messurement>().Property(x => x.EntryCount);
-            //modelBuilder.Entity<Messurement>().Property(x => x.CreatedOn);
-            //modelBuilder.Entity<Messurement>().Property(x => x.UpdatedOn);
-            //modelBuilder.Entity<Messurement>().Property(x => x.TimeRead);
-            //modelBuilder.Entity<Messurement>().Property(x => x.TimeWrite);
-
-            //modelBuilder.Entity<User>().HasMany<Content>();
-            //modelBuilder.Entity<Content>().HasMany<ContentEntry>();
         }
     }
 }

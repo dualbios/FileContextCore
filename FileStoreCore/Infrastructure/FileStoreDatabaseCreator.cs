@@ -7,18 +7,19 @@ public class FileStoreDatabaseCreator : IDatabaseCreator
 {
     private readonly IDatabase _database;
 
-    protected virtual FileStoreDatabase Database => (FileStoreDatabase)_database;
-
     public FileStoreDatabaseCreator(IDatabase database)
     {
         _database = database;
     }
-    public bool EnsureDeleted()
+
+    protected virtual FileStoreDatabase Database => (FileStoreDatabase)_database;
+
+    public bool CanConnect()
     {
         return true;
     }
 
-    public Task<bool> EnsureDeletedAsync(CancellationToken cancellationToken = new CancellationToken())
+    public Task<bool> CanConnectAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         return Task.FromResult(true);
     }
@@ -33,12 +34,12 @@ public class FileStoreDatabaseCreator : IDatabaseCreator
         return Task.FromResult(true);
     }
 
-    public bool CanConnect()
+    public bool EnsureDeleted()
     {
         return true;
     }
 
-    public Task<bool> CanConnectAsync(CancellationToken cancellationToken = new CancellationToken())
+    public Task<bool> EnsureDeletedAsync(CancellationToken cancellationToken = new CancellationToken())
     {
         return Task.FromResult(true);
     }

@@ -40,12 +40,6 @@ public class FileStoreTable<TKey> : IFileStoreTable
         Load();
     }
 
-    //private Dictionary<TKey, object[]> Init()
-    //{
-    //    //Dictionary<TKey, object[]> newList = new Dictionary<TKey, object[]>(_keyValueFactory.EqualityComparer);
-    //    //return ConvertFromProvider(_storeManager.Deserialize(newList));
-    //}
-
     public IEnumerable<object[]> Rows => _rows.Values;
 
     public void Create(IUpdateEntry entry)
@@ -138,7 +132,6 @@ public class FileStoreTable<TKey> : IFileStoreTable
         else
         {
             throw new DbUpdateConcurrencyException("UpdateConcurrencyException", new[] { entry });
-            //throw new DbUpdateConcurrencyException(FileContextStrings.UpdateConcurrencyException, new[] { entry });
         }
     }
 
@@ -172,7 +165,7 @@ public class FileStoreTable<TKey> : IFileStoreTable
 
             _rows[key] = valueBuffer;
 
-            //BumpValueGenerators(valueBuffer);
+            BumpValueGenerators(valueBuffer);
         }
         else
         {
@@ -216,11 +209,6 @@ public class FileStoreTable<TKey> : IFileStoreTable
         return false;
     }
 
-    /// <summary>
-    ///     Throws an exception indicating that concurrency conflicts were detected.
-    /// </summary>
-    /// <param name="entry"> The update entry which resulted in the conflict(s). </param>
-    /// <param name="concurrencyConflicts"> The conflicting properties with their associated database values. </param>
     protected virtual void ThrowUpdateConcurrencyException([NotNull] IUpdateEntry entry, [NotNull] Dictionary<IProperty, object> concurrencyConflicts)
     {
         //Check.NotNull(entry, nameof(entry));
