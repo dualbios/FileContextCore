@@ -1,30 +1,43 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using FileStoreCore.Extensions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update;
-using System.Diagnostics;
 
 namespace FileStoreCore.Storage;
 
-public class FileStoreDatabase : Database
+public class FileStoreDatabase : Database, IFileStoreDatabase
 {
-    private readonly IFileStoreStore _fileStoreStore;
+    private readonly IFileStoreStore _store;
+    private readonly IDesignTimeModel _designTimeModel;
+    private readonly IUpdateAdapterFactory _updateAdapterFactory;
 
     public FileStoreDatabase(
         DatabaseDependencies dependencies,
-        IFileStoreStore fileStoreStore) : base(dependencies)
+        IFileStoreStoreCache storeCache,
+        IDbContextOptions options,
+        IDesignTimeModel designTimeModel,
+        IUpdateAdapterFactory updateAdapterFactory) : base(dependencies)
     {
-        _fileStoreStore = fileStoreStore;
+        _store = storeCache.GetStore(options);
+        _designTimeModel = designTimeModel;
+        _updateAdapterFactory = updateAdapterFactory;
     }
 
     public override int SaveChanges(IList<IUpdateEntry> entries)
     {
-        return _fileStoreStore.Execute(entries);
+        return _store.ExecuteTransaction(entries);
     }
-
 
     public override Task<int> SaveChangesAsync(IList<IUpdateEntry> entries, CancellationToken cancellationToken = new CancellationToken())
     {
-        throw new NotImplementedException();
+        return cancellationToken.IsCancellationRequested
+            ? Task.FromCanceled<int>(cancellationToken)
+            : Task.FromResult(_store.ExecuteTransaction(entries));
+    }
+
+    public virtual bool EnsureDatabaseCreated()
+    {
+        return _store.EnsureCreated(_updateAdapterFactory, _designTimeModel.Model);
     }
 }

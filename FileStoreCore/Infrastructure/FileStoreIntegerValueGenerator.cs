@@ -4,7 +4,7 @@ using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 namespace FileStoreCore.Infrastructure;
 
-internal class FileStoreIntegerValueGenerator<TValue> : ValueGenerator<TValue>, IFileStoreIntegerValueGenerator
+public class FileStoreIntegerValueGenerator<TValue> : ValueGenerator<TValue>, IFileStoreIntegerValueGenerator
 {
     private readonly int _propertyIndex;
     private long _current;

@@ -23,7 +23,7 @@ namespace Example
 
             watch.Start();
 
-
+            db.Users.Load();
 
             List<User> users2 = db.Users.Include("Contents.Entries").Include("Contents").Include("Contents").ToList();
 

@@ -21,8 +21,8 @@ public static class FileStoreServiceCollectionExtensions
             .TryAdd<IDatabaseProvider, DatabaseProvider<FileStoreOptionsExtension>>()
 
             //.TryAdd<IValueGeneratorSelector, FileContextValueGeneratorSelector>()
-            //.TryAdd<IDatabase>(p => p.GetService<IFileContextDatabase>())
-            .TryAdd<IDatabase, FileStoreDatabase>()
+            .TryAdd<IDatabase>(p => p.GetService<IFileStoreDatabase>())
+            //.TryAdd<IDatabase, FileStoreDatabase>()
             //.TryAdd<ISingletonOptionsInitializer, SingletonOptionsInitializer>()
 
             .TryAdd<IDbContextTransactionManager, FileStoreTransactionManager>()
@@ -39,9 +39,13 @@ public static class FileStoreServiceCollectionExtensions
             .TryAddProviderSpecificServices(
                 b => b
                     .TryAddSingleton<IFileStoreFileManager, FileStoreFileManager>()
-                    .TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>()
-                    .TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>()
-                    .TryAddSingleton<IFileStoreStore, FileStoreStore>()
+                    //.TryAddSingleton<FileStoreTablesManager, FileStoreTablesManager>()
+                    //.TryAddSingleton<IFileStoreStore, FileStoreStore>()
+
+                    .TryAddSingleton<IFileStoreSingletonOptions, FileStoreSingletonOptions>()
+                    .TryAddSingleton<IFileStoreStoreCache, FileStoreStoreCache>()
+                    //.TryAddSingleton<IFileStoreTableFactory, FileStoreTableFactory>()
+                    .TryAddScoped<IFileStoreDatabase, FileStoreDatabase>()
                 );
                     //.TryAddSingleton<FileStoreTableFactory, FileStoreTableFactory>()
                     //.GetInfrastructure()

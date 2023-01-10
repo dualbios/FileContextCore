@@ -16,7 +16,7 @@ namespace FileStoreCore.Example.Data
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseFileStoreDatabase();
+            optionsBuilder.UseFileStoreDatabase("my_local_db");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)

@@ -14,7 +14,7 @@ public static class FileStoreDbContextOptionsExtensions
         var extension = optionsBuilder.Options.FindExtension<FileStoreOptionsExtension>()
                         ?? new FileStoreOptionsExtension()
                         {
-                            DatabaseName = databaseName,
+                            StoreName = databaseName,
                             Location = location
                         };
 
@@ -22,4 +22,12 @@ public static class FileStoreDbContextOptionsExtensions
 
         return optionsBuilder;
     }
+
+    //public static DbContextOptionsBuilder<TContext> UseInMemoryDatabase<TContext>(
+    //    this DbContextOptionsBuilder<TContext> optionsBuilder,
+    //    string databaseName,
+    //    Action<InMemoryDbContextOptionsBuilder>? inMemoryOptionsAction = null)
+    //    where TContext : DbContext
+        //=> (DbContextOptionsBuilder<TContext>)UseInMemoryDatabase(
+        //    (DbContextOptionsBuilder)optionsBuilder, databaseName, inMemoryOptionsAction);
 }

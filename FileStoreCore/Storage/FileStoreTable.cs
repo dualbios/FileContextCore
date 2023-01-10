@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using FileStoreCore.Infrastructure;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace FileStoreCore.Storage;
 
@@ -16,6 +17,7 @@ public class FileStoreTable<TKey> : IFileStoreTable
 {
     private readonly IEntityType _entityType;
     private readonly IFileStoreFileManager _fileManager;
+    private readonly IFileStoreScopedOptions _options;
     private readonly IKey _primaryKey;
     private Dictionary<TKey, object[]> _rows = new Dictionary<TKey, object[]>();
     private readonly ISerializer _serializer;
@@ -24,15 +26,16 @@ public class FileStoreTable<TKey> : IFileStoreTable
     private Dictionary<int, IFileStoreIntegerValueGenerator> _integerGenerators;
 
 
-    public FileStoreTable(IEntityType entityType, IFileStoreFileManager fileManager)
+    public FileStoreTable(IEntityType entityType, IServiceProvider serviceProvider, IFileStoreScopedOptions options)
     {
         _entityType = entityType;
-        _fileManager = fileManager;
+        _fileManager = serviceProvider.GetService<IFileStoreFileManager>();
+        _options = options;
         _primaryKey = entityType.FindPrimaryKey();
         _keyValueFactory = _primaryKey.GetPrincipalKeyValueFactory<TKey>();
         _serializer = new JsonDataSerializer(entityType, _keyValueFactory);
 
-        _fileManager.Init();
+        _fileManager.Init(_options);
 
         Load();
     }
@@ -42,6 +45,8 @@ public class FileStoreTable<TKey> : IFileStoreTable
     //    //Dictionary<TKey, object[]> newList = new Dictionary<TKey, object[]>(_keyValueFactory.EqualityComparer);
     //    //return ConvertFromProvider(_storeManager.Deserialize(newList));
     //}
+
+    public IEnumerable<object[]> Rows => _rows.Values;
 
     public void Create(IUpdateEntry entry)
     {
@@ -236,5 +241,29 @@ public class FileStoreTable<TKey> : IFileStoreTable
             //FileContextStrings.UpdateConcurrencyTokenException(entry.EntityType.DisplayName(), concurrencyConflicts.Keys.Format()),
             $"{entry.EntityType.DisplayName()},{concurrencyConflicts.Keys.Format()}",
             new[] { entry });
+    }
+
+    public virtual FileStoreIntegerValueGenerator<TProperty> GetIntegerValueGenerator<TProperty>(
+        IProperty property,
+        IReadOnlyList<IFileStoreTable> tables)
+    {
+        _integerGenerators ??= new Dictionary<int, IFileStoreIntegerValueGenerator>();
+
+        var propertyIndex = property.GetIndex();
+        if (!_integerGenerators.TryGetValue(propertyIndex, out var generator))
+        {
+            generator = new FileStoreIntegerValueGenerator<TProperty>(propertyIndex);
+            _integerGenerators[propertyIndex] = generator;
+
+            foreach (var table in tables)
+            {
+                foreach (var row in table.Rows)
+                {
+                    generator.Bump(row);
+                }
+            }
+        }
+
+        return (FileStoreIntegerValueGenerator<TProperty>)generator;
     }
 }

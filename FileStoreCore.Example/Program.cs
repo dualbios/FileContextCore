@@ -10,10 +10,9 @@ namespace FileStoreCore.Example
         {
             Context db = new Context();
             Console.WriteLine(db.Database.CanConnect());
-
             //List<User> users = db.Users.Include(x=>x.Contents).ThenInclude(x=>x.Entries).ToList();
 
-            ContentEntry entry = db.ContentEntries.FirstOrDefault();
+            //ContentEntry entry = db.ContentEntries.FirstOrDefault();
 
             db.Contents.Load();
             db.Users.Load();

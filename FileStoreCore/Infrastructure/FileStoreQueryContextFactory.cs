@@ -2,26 +2,27 @@
 using Microsoft.EntityFrameworkCore.Query;
 using System.Diagnostics.CodeAnalysis;
 using FileStoreCore.Storage;
+using FileStoreCore.Extensions;
 
 namespace FileStoreCore.Infrastructure;
 
 public class FileStoreQueryContextFactory : IQueryContextFactory
 {
     private readonly QueryContextDependencies _dependencies;
-    private readonly IFileStoreStore _fileStoreStore;
+    private readonly IFileStoreStore _store;
 
     public FileStoreQueryContextFactory(
         QueryContextDependencies dependencies,
-        IFileStoreStore fileStoreStore,
+        IFileStoreStoreCache fileStoreStoreCache,
         IDbContextOptions contextOptions)
     {
         //_store = storeCache.GetStore(contextOptions);
         _dependencies = dependencies;
-        _fileStoreStore = fileStoreStore;
+        _store = fileStoreStoreCache.GetStore(contextOptions);
     }
 
     public virtual QueryContext Create()
     {
-        return new FileStoreQueryContext(_dependencies, _fileStoreStore);
+        return new FileStoreQueryContext(_dependencies, _store);
     }
 }

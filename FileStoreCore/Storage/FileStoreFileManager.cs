@@ -1,9 +1,7 @@
-﻿using System.String;
-using FileStoreCore.Infrastructure;
-using FileStoreCore.Serializers;
+﻿using FileStoreCore.Serializers;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.String;
 
 namespace FileStoreCore.Storage;
 
@@ -17,8 +15,10 @@ public class FileStoreFileManager : IFileStoreFileManager
     {
     }
 
-    public void Init()
+    public void Init(IFileStoreScopedOptions options)
     {
+        _databasename = options.DatabaseName;
+        _location = options.Location;
     }
 
     public string GetFileName(IEntityType _entityType)
