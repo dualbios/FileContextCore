@@ -1,8 +1,4 @@
-﻿
-using System;
-using System.Threading.Tasks;
-
-namespace FileStoreCore.Extensions;
+﻿namespace FileStoreCore.Extensions;
 
 internal static class DisposableExtensions
 {

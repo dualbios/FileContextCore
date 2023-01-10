@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Diagnostics.CodeAnalysis;
+using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace FileStoreCore.Infrastructure;
 
@@ -27,7 +26,6 @@ public class FileSoreTypeMapping : CoreTypeMapping
         : base(parameters)
     {
     }
-
 
     public override CoreTypeMapping Clone(ValueConverter converter)
     {

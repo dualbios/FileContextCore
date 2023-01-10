@@ -1,6 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 
 namespace FileStoreCore.Serializers;
@@ -69,5 +68,6 @@ public class JsonDataSerializer : ISerializer
 public interface ISerializer
 {
     string Serialize<TKey>(Dictionary<TKey, object[]> list);
+
     Dictionary<TKey, object[]> Deserialize<TKey>(string list, Dictionary<TKey, object[]> newList);
 }

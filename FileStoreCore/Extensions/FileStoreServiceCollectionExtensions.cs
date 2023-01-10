@@ -36,7 +36,7 @@ public static class FileStoreServiceCollectionExtensions
                     .TryAddSingleton<IFileStoreStoreCache, FileStoreStoreCache>()
                     .TryAddScoped<IFileStoreDatabase, FileStoreDatabase>()
                 );
-        
+
         builder.TryAddCoreServices();
 
         return serviceCollection;

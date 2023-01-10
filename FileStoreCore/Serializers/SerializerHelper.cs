@@ -1,7 +1,7 @@
-﻿using System.Globalization;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
+using System.Globalization;
 
 namespace FileStoreCore.Serializers
 {
@@ -60,7 +60,7 @@ namespace FileStoreCore.Serializers
                 {
                     string result = "";
 
-                    object[] arr = (object[]) input;
+                    object[] arr = (object[])input;
 
                     for (int i = 0; i < arr.Length; i++)
                     {
@@ -85,9 +85,9 @@ namespace FileStoreCore.Serializers
 
         public static TKey GetKey<TKey>(object keyValueFactoryObject, IEntityType entityType, Func<string, string> valueSelector)
         {
-            IPrincipalKeyValueFactory<TKey> keyValueFactory = (IPrincipalKeyValueFactory<TKey>) keyValueFactoryObject;
-            
-            return (TKey) keyValueFactory.CreateFromKeyValues(
+            IPrincipalKeyValueFactory<TKey> keyValueFactory = (IPrincipalKeyValueFactory<TKey>)keyValueFactoryObject;
+
+            return (TKey)keyValueFactory.CreateFromKeyValues(
                 entityType.FindPrimaryKey().Properties
                     .Select(p =>
                         valueSelector(p.GetColumnName())

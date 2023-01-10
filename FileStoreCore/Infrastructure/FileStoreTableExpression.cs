@@ -16,7 +16,7 @@ public class FileStoreTableExpression : Expression, IPrintableExpression
 
     public virtual IEntityType EntityType { get; }
 
-    public sealed override ExpressionType NodeType => ExpressionType.Extension;
+    public override sealed ExpressionType NodeType => ExpressionType.Extension;
 
     protected override Expression VisitChildren(ExpressionVisitor visitor)
     {

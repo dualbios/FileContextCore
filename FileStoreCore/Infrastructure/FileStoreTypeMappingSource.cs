@@ -4,7 +4,7 @@ using System.Diagnostics;
 
 namespace FileStoreCore.Infrastructure;
 
-public class FileStoreTypeMappingSource: TypeMappingSource
+public class FileStoreTypeMappingSource : TypeMappingSource
 {
     public FileStoreTypeMappingSource(TypeMappingSourceDependencies dependencies) : base(dependencies)
     {

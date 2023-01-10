@@ -1,5 +1,4 @@
-﻿using FileStoreCore.Extensions;
-using Microsoft.EntityFrameworkCore.Query;
+﻿using Microsoft.EntityFrameworkCore.Query;
 
 namespace FileStoreCore.Infrastructure;
 

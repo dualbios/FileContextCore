@@ -3,9 +3,7 @@
 // Modified version by morrisjdev
 // Licensed under the Apache License, Version 2.0. See License.txt in the project root for license information.
 
-using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 
@@ -348,5 +346,4 @@ internal static class SharedTypeExtensions
 
     public static bool IsNullableValueType(this Type type)
         => type.IsConstructedGenericType && type.GetGenericTypeDefinition() == typeof(Nullable<>);
-
 }

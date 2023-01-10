@@ -59,5 +59,4 @@ public static class ExpressionExtensions
         => expression is ConstantExpression constantExpression
             ? (T)constantExpression.Value!
             : throw new InvalidOperationException();
-
 }

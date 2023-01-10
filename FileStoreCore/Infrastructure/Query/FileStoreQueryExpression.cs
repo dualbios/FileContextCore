@@ -222,33 +222,33 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
                 switch (projection)
                 {
                     case EntityProjectionExpression entityProjectionExpression:
-                    {
-                        var indexMap = new Dictionary<IProperty, int>();
-                        foreach (var property in GetAllPropertiesInHierarchy(entityProjectionExpression.EntityType))
                         {
-                            selectorExpressions.Add(entityProjectionExpression.BindProperty(property));
-                            indexMap[property] = selectorExpressions.Count - 1;
-                        }
+                            var indexMap = new Dictionary<IProperty, int>();
+                            foreach (var property in GetAllPropertiesInHierarchy(entityProjectionExpression.EntityType))
+                            {
+                                selectorExpressions.Add(entityProjectionExpression.BindProperty(property));
+                                indexMap[property] = selectorExpressions.Count - 1;
+                            }
 
-                        _clientProjections[i] = Constant(indexMap);
-                        break;
-                    }
+                            _clientProjections[i] = Constant(indexMap);
+                            break;
+                        }
 
                     case FileStoreQueryExpression inMemoryQueryExpression:
-                    {
-                        var singleResult = inMemoryQueryExpression._scalarServerQuery
-                            || inMemoryQueryExpression._singleResultMethodInfo != null;
-                        inMemoryQueryExpression.ApplyProjection();
-                        var serverQuery = inMemoryQueryExpression.ServerQueryExpression;
-                        if (singleResult)
                         {
-                            serverQuery = ((LambdaExpression)((NewExpression)serverQuery).Arguments[0]).Body;
-                        }
+                            var singleResult = inMemoryQueryExpression._scalarServerQuery
+                                || inMemoryQueryExpression._singleResultMethodInfo != null;
+                            inMemoryQueryExpression.ApplyProjection();
+                            var serverQuery = inMemoryQueryExpression.ServerQueryExpression;
+                            if (singleResult)
+                            {
+                                serverQuery = ((LambdaExpression)((NewExpression)serverQuery).Arguments[0]).Body;
+                            }
 
-                        selectorExpressions.Add(serverQuery);
-                        _clientProjections[i] = Constant(selectorExpressions.Count - 1);
-                        break;
-                    }
+                            selectorExpressions.Add(serverQuery);
+                            _clientProjections[i] = Constant(selectorExpressions.Count - 1);
+                            break;
+                        }
 
                     default:
                         selectorExpressions.Add(projection);
@@ -651,7 +651,7 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
     public override Type Type
         => typeof(IEnumerable<ValueBuffer>);
 
-    public sealed override ExpressionType NodeType
+    public override sealed ExpressionType NodeType
         => ExpressionType.Extension;
 
     void IPrintableExpression.Print(ExpressionPrinter expressionPrinter)

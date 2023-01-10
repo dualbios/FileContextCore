@@ -30,7 +30,7 @@ public class SingleResultShaperExpression : Expression, IPrintableExpression
             ? new SingleResultShaperExpression(projection, innerShaper)
             : this;
 
-    public sealed override ExpressionType NodeType
+    public override sealed ExpressionType NodeType
         => ExpressionType.Extension;
 
     public override Type Type { get; }

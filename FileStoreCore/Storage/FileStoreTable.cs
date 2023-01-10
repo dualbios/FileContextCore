@@ -1,15 +1,14 @@
-﻿using FileStoreCore.Serializers;
+﻿using FileStoreCore.Infrastructure;
+using FileStoreCore.Serializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Update;
+using Microsoft.Extensions.DependencyInjection;
 using System.Collections;
 using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using FileStoreCore.Infrastructure;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace FileStoreCore.Storage;
 
@@ -24,7 +23,6 @@ public class FileStoreTable<TKey> : IFileStoreTable
     private IPrincipalKeyValueFactory<TKey> _keyValueFactory = null;
 
     private Dictionary<int, IFileStoreIntegerValueGenerator> _integerGenerators;
-
 
     public FileStoreTable(IEntityType entityType, IServiceProvider serviceProvider, IFileStoreScopedOptions options)
     {
@@ -188,7 +186,6 @@ public class FileStoreTable<TKey> : IFileStoreTable
     {
         return properties.Select(GetStructuralComparer).ToList();
     }
-
 
     private static bool IsConcurrencyConflict(
         IUpdateEntry entry,

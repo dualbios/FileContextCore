@@ -9,6 +9,5 @@ public class FileStoreQueryTranslationPostprocessor : QueryTranslationPostproces
         QueryCompilationContext queryCompilationContext)
         : base(dependencies, queryCompilationContext)
     {
-        
     }
 }

@@ -99,17 +99,17 @@ public class FileStoreProjectionBindingExpressionVisitor : ExpressionVisitor
                         throw new InvalidOperationException("CoreStrings.TranslationFailed(projectionBindingExpression.Print())");
 
                     case MaterializeCollectionNavigationExpression materializeCollectionNavigationExpression:
-                    {
-                        var subquery = _queryableMethodTranslatingExpressionVisitor.TranslateSubquery(
-                            materializeCollectionNavigationExpression.Subquery)!;
-                        _clientProjections!.Add(subquery.QueryExpression);
-                        return new CollectionResultShaperExpression(
-                            new ProjectionBindingExpression(
-                                _queryExpression, _clientProjections.Count - 1, typeof(IEnumerable<ValueBuffer>)),
-                            subquery.ShaperExpression,
-                            materializeCollectionNavigationExpression.Navigation,
-                            materializeCollectionNavigationExpression.Navigation.ClrType.GetSequenceType());
-                    }
+                        {
+                            var subquery = _queryableMethodTranslatingExpressionVisitor.TranslateSubquery(
+                                materializeCollectionNavigationExpression.Subquery)!;
+                            _clientProjections!.Add(subquery.QueryExpression);
+                            return new CollectionResultShaperExpression(
+                                new ProjectionBindingExpression(
+                                    _queryExpression, _clientProjections.Count - 1, typeof(IEnumerable<ValueBuffer>)),
+                                subquery.ShaperExpression,
+                                materializeCollectionNavigationExpression.Navigation,
+                                materializeCollectionNavigationExpression.Navigation.ClrType.GetSequenceType());
+                        }
 
                     case MethodCallExpression methodCallExpression:
                         if (methodCallExpression.Method.IsGenericMethod

@@ -13,7 +13,9 @@ public interface IFileStoreTable
     void Save();
 
     IReadOnlyList<object[]> SnapshotRows();
+
     void Delete(IUpdateEntry entry);
+
     void Update(IUpdateEntry entry);
 
     FileStoreIntegerValueGenerator<TProperty> GetIntegerValueGenerator<TProperty>(

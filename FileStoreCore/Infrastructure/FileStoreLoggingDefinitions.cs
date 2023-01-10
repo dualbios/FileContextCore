@@ -2,6 +2,6 @@
 
 namespace FileStoreCore.Infrastructure;
 
-public class FileStoreLoggingDefinitions: LoggingDefinitions
+public class FileStoreLoggingDefinitions : LoggingDefinitions
 {
 }

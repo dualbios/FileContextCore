@@ -201,6 +201,7 @@ internal static class EnumerableMethods
 
     // private static Dictionary<Type, MethodInfo> AverageWithoutSelectorMethods { get; }
     private static Dictionary<Type, MethodInfo> AverageWithSelectorMethods { get; }
+
     private static Dictionary<Type, MethodInfo> MaxWithoutSelectorMethods { get; }
     private static Dictionary<Type, MethodInfo> MaxWithSelectorMethods { get; }
     private static Dictionary<Type, MethodInfo> MinWithoutSelectorMethods { get; }

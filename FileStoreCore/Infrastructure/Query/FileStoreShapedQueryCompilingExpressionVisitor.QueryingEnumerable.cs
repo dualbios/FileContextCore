@@ -2,15 +2,14 @@
 // The .NET Foundation licenses this file to you under the MIT license.
 
 using FileStoreCore.Extensions;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using System.Collections;
-using Microsoft.EntityFrameworkCore;
 
 namespace FileStoreCore.Infrastructure.Query.Internal;
-
 
 public partial class FileStoreShapedQueryCompilingExpressionVisitor
 {
