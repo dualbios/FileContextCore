@@ -27,11 +27,11 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         = typeof(ResultEnumerable).GetConstructors().Single();
 
     private readonly ParameterExpression _valueBufferParameter;
-    private ParameterExpression? _groupingParameter;
-    private MethodInfo? _singleResultMethodInfo;
+    private ParameterExpression _groupingParameter;
+    private MethodInfo _singleResultMethodInfo;
     private bool _scalarServerQuery;
 
-    private CloningExpressionVisitor? _cloningExpressionVisitor;
+    private CloningExpressionVisitor _cloningExpressionVisitor;
 
     private Dictionary<ProjectionMember, Expression> _projectionMapping = new();
     private readonly List<Expression> _clientProjections = new();
@@ -421,7 +421,7 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         ServerQueryExpression = Call(
             EnumerableMethods.DefaultIfEmptyWithArgument.MakeGenericMethod(typeof(ValueBuffer)),
             ServerQueryExpression,
-            Constant(new ValueBuffer(Enumerable.Repeat((object?)null, _projectionMappingExpressions.Count).ToArray())));
+            Constant(new ValueBuffer(Enumerable.Repeat((object)null, _projectionMappingExpressions.Count).ToArray())));
     }
 
     public virtual void ApplyDistinct()
@@ -485,7 +485,7 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         bool defaultElementSelector)
     {
         var source = ServerQueryExpression;
-        Expression? selector;
+        Expression selector;
         if (defaultElementSelector)
         {
             selector = Lambda(
@@ -612,7 +612,7 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
             resultSelector,
             Constant(
                 new ValueBuffer(
-                    Enumerable.Repeat((object?)null, selectorExpressions.Count - outerIndex).ToArray())));
+                    Enumerable.Repeat((object)null, selectorExpressions.Count - outerIndex).ToArray())));
 
         var entityShaper = new EntityShaperExpression(innerEntityProjection.EntityType, innerEntityProjection, nullable: true);
         entityProjectionExpression.AddNavigationBinding(navigation, entityShaper);
@@ -766,8 +766,8 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
 
     private Expression AddJoin(
         FileStoreQueryExpression innerQueryExpression,
-        LambdaExpression? outerKeySelector,
-        LambdaExpression? innerKeySelector,
+        LambdaExpression outerKeySelector,
+        LambdaExpression innerKeySelector,
         Expression outerShaperExpression,
         Expression innerShaperExpression,
         bool innerNullable)
@@ -934,7 +934,7 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
                     resultSelector,
                     Constant(
                         new ValueBuffer(
-                            Enumerable.Repeat((object?)null, resultSelectorExpressions.Count - outerIndex).ToArray())));
+                            Enumerable.Repeat((object)null, resultSelectorExpressions.Count - outerIndex).ToArray())));
             }
             else
             {
@@ -1004,14 +1004,14 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         }
     }
 
-    private MethodCallExpression CreateReadValueExpression(Type type, int index, IPropertyBase? property)
+    private MethodCallExpression CreateReadValueExpression(Type type, int index, IPropertyBase property)
         => (MethodCallExpression)_valueBufferParameter.CreateValueBufferReadValueExpression(type, index, property);
 
     private static IEnumerable<IProperty> GetAllPropertiesInHierarchy(IEntityType entityType)
         => entityType.GetAllBaseTypes().Concat(entityType.GetDerivedTypesInclusive())
             .SelectMany(t => t.GetDeclaredProperties());
 
-    private static IPropertyBase? InferPropertyFromInner(Expression expression)
+    private static IPropertyBase InferPropertyFromInner(Expression expression)
         => expression is MethodCallExpression methodCallExpression
             && methodCallExpression.Method.IsGenericMethod
             && methodCallExpression.Method.GetGenericMethodDefinition() == ExpressionExtensions.ValueBufferTryReadValueMethod

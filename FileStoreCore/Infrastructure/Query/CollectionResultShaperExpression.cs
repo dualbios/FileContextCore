@@ -10,7 +10,7 @@ namespace FileStoreCore.Infrastructure.Query.Internal;
 
 public class CollectionResultShaperExpression : Expression, IPrintableExpression
 {
-    public CollectionResultShaperExpression(Expression projection, Expression innerShaper, INavigationBase? navigation, Type elementType)
+    public CollectionResultShaperExpression(Expression projection, Expression innerShaper, INavigationBase navigation, Type elementType)
     {
         Projection = projection;
         InnerShaper = innerShaper;
@@ -20,7 +20,7 @@ public class CollectionResultShaperExpression : Expression, IPrintableExpression
 
     public virtual Type ElementType { get; }
     public virtual Expression InnerShaper { get; }
-    public virtual INavigationBase? Navigation { get; }
+    public virtual INavigationBase Navigation { get; }
     public override sealed ExpressionType NodeType => ExpressionType.Extension;
     public virtual Expression Projection { get; }
     public override Type Type => Navigation?.ClrType ?? typeof(List<>).MakeGenericType(ElementType);

@@ -6,7 +6,7 @@ namespace FileStoreCore.Storage;
 
 public class FileStoreTableFactory : IFileStoreTableFactory
 {
-    private readonly ConcurrentDictionary<(IEntityType EntityType, IFileStoreTable? BaseTable), Func<IFileStoreTable>> _factories = new();
+    private readonly ConcurrentDictionary<(IEntityType EntityType, IFileStoreTable BaseTable), Func<IFileStoreTable>> _factories = new();
     private readonly bool _nullabilityCheckEnabled;
     private readonly IFileStoreScopedOptions _options;
     private readonly IServiceProvider _serviceProvider;
@@ -17,7 +17,7 @@ public class FileStoreTableFactory : IFileStoreTableFactory
         _options = options;
     }
 
-    public virtual IFileStoreTable Create(IEntityType entityType, IFileStoreTable? baseTable)
+    public virtual IFileStoreTable Create(IEntityType entityType, IFileStoreTable baseTable)
         => _factories.GetOrAdd((entityType, baseTable), e => CreateTable(e.EntityType, e.BaseTable))();
 
     private static Func<IFileStoreTable> CreateFactory<TKey>(
@@ -29,7 +29,7 @@ public class FileStoreTableFactory : IFileStoreTableFactory
         return () => new FileStoreTable<TKey>(entityType, serviceProvider, options);
     }
 
-    private Func<IFileStoreTable> CreateTable(IEntityType entityType, IFileStoreTable? baseTable)
+    private Func<IFileStoreTable> CreateTable(IEntityType entityType, IFileStoreTable baseTable)
     {
         return (Func<IFileStoreTable>)typeof(FileStoreTableFactory).GetTypeInfo()
             .GetDeclaredMethod(nameof(CreateFactory))!

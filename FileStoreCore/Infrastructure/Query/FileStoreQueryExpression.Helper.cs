@@ -88,7 +88,7 @@ public partial class FileStoreQueryExpression
         }
 
         [return: NotNullIfNotNull("expression")]
-        public override Expression? Visit(Expression? expression)
+        public override Expression Visit(Expression expression)
         {
             if (expression is ProjectionBindingExpression projectionBindingExpression)
             {
@@ -116,7 +116,7 @@ public partial class FileStoreQueryExpression
         }
 
         [return: NotNullIfNotNull("expression")]
-        public override Expression? Visit(Expression? expression)
+        public override Expression Visit(Expression expression)
         {
             if (expression is ProjectionBindingExpression projectionBindingExpression)
             {
@@ -147,7 +147,7 @@ public partial class FileStoreQueryExpression
         }
 
         [return: NotNullIfNotNull("expression")]
-        public override Expression? Visit(Expression? expression)
+        public override Expression Visit(Expression expression)
         {
             if (expression is ProjectionBindingExpression projectionBindingExpression
                 && ReferenceEquals(projectionBindingExpression.QueryExpression, _oldExpression))
@@ -184,7 +184,7 @@ public partial class FileStoreQueryExpression
         }
 
         [return: NotNullIfNotNull("expression")]
-        public override Expression? Visit(Expression? expression)
+        public override Expression Visit(Expression expression)
         {
             return expression is ProjectionBindingExpression projectionBindingExpression
                    && ReferenceEquals(projectionBindingExpression.QueryExpression, _oldQuery)
@@ -200,7 +200,7 @@ public partial class FileStoreQueryExpression
     private sealed class CloningExpressionVisitor : ExpressionVisitor
     {
         [return: NotNullIfNotNull("expression")]
-        public override Expression? Visit(Expression? expression)
+        public override Expression Visit(Expression expression)
         {
             if (expression is FileStoreQueryExpression inMemoryQueryExpression)
             {

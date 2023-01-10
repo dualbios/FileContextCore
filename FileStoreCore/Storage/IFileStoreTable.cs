@@ -6,7 +6,7 @@ namespace FileStoreCore.Storage;
 
 public interface IFileStoreTable
 {
-    IEnumerable<object?[]> Rows { get; }
+    IEnumerable<object[]> Rows { get; }
 
     void Create(IUpdateEntry entry);
 

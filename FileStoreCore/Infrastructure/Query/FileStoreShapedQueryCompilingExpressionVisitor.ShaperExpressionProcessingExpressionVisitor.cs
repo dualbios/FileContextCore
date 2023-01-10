@@ -33,7 +33,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
 
         private readonly FileStoreShapedQueryCompilingExpressionVisitor _fileStoreShapedQueryCompilingExpressionVisitor;
         private readonly bool _tracking;
-        private ParameterExpression? _valueBufferParameter;
+        private ParameterExpression _valueBufferParameter;
 
         private readonly Dictionary<Expression, ParameterExpression> _mapping = new();
         private readonly List<ParameterExpression> _variables = new();
@@ -243,7 +243,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             if (methodCallExpression.Method.IsGenericMethod
                 && methodCallExpression.Method.GetGenericMethodDefinition() == ExpressionExtensions.ValueBufferTryReadValueMethod)
             {
-                var property = methodCallExpression.Arguments[2].GetConstantValue<IProperty?>();
+                var property = methodCallExpression.Arguments[2].GetConstantValue<IProperty>();
                 var indexMap = _materializationContextBindings[
                     (ParameterExpression)((MethodCallExpression)methodCallExpression.Arguments[0]).Object!];
 
@@ -263,9 +263,9 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
         private static void IncludeReference<TEntity, TIncludingEntity, TIncludedEntity>(
             QueryContext queryContext,
             TEntity entity,
-            TIncludedEntity? relatedEntity,
+            TIncludedEntity relatedEntity,
             INavigationBase navigation,
-            INavigationBase? inverseNavigation,
+            INavigationBase inverseNavigation,
             Action<TIncludingEntity, TIncludedEntity> fixup,
             bool trackingQuery)
             where TIncludingEntity : class, TEntity
@@ -305,7 +305,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             Func<QueryContext, ValueBuffer, TIncludedEntity> innerShaper,
             TEntity entity,
             INavigationBase navigation,
-            INavigationBase? inverseNavigation,
+            INavigationBase inverseNavigation,
             Action<TIncludingEntity, TIncludedEntity> fixup,
             bool trackingQuery,
             bool setLoaded)
@@ -349,7 +349,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             QueryContext queryContext,
             IEnumerable<ValueBuffer> innerValueBuffers,
             Func<QueryContext, ValueBuffer, TElement> innerShaper,
-            IClrCollectionAccessor? clrCollectionAccessor)
+            IClrCollectionAccessor clrCollectionAccessor)
             where TCollection : class, ICollection<TElement>
         {
             var collection = (TCollection)(clrCollectionAccessor?.Create() ?? new List<TElement>());
@@ -363,7 +363,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             return collection;
         }
 
-        private static TResult? MaterializeSingleResult<TResult>(
+        private static TResult MaterializeSingleResult<TResult>(
             QueryContext queryContext,
             ValueBuffer valueBuffer,
             Func<QueryContext, ValueBuffer, TResult> innerShaper)
@@ -375,7 +375,7 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             Type entityType,
             Type relatedEntityType,
             INavigationBase navigation,
-            INavigationBase? inverseNavigation)
+            INavigationBase inverseNavigation)
         {
             var entityParameter = Expression.Parameter(entityType);
             var relatedEntityParameter = Expression.Parameter(relatedEntityType);

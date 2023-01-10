@@ -10,7 +10,7 @@ internal class FileStoreStore : IFileStoreStore
     private readonly IFileStoreTableFactory _tableFactory;
     private readonly bool _useNameMatching;
     private object _lock = new();
-    private Dictionary<object, IFileStoreTable>? _tables;
+    private Dictionary<object, IFileStoreTable> _tables;
 
     public FileStoreStore(IFileStoreTableFactory fileStoreTableFactory, bool useNameMatching)
     {
@@ -150,7 +150,7 @@ internal class FileStoreStore : IFileStoreStore
     {
         _tables ??= CreateTables();
 
-        IFileStoreTable? baseTable = null;
+        IFileStoreTable baseTable = null;
 
         var entityTypes = entityType.GetAllBaseTypesInclusive();
         foreach (var currentEntityType in entityTypes)

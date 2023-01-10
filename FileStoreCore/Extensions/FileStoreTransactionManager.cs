@@ -6,7 +6,7 @@ public class FileStoreTransactionManager : IDbContextTransactionManager/*, ITran
 {
     private static readonly FileStoreTransaction _stubTransaction = new FileStoreTransaction();
 
-    public IDbContextTransaction? CurrentTransaction { get; } = null;
+    public IDbContextTransaction CurrentTransaction { get; } = null;
 
     public IDbContextTransaction BeginTransaction()
     {

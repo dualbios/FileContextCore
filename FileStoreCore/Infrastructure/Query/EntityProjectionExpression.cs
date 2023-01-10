@@ -128,7 +128,7 @@ public class EntityProjectionExpression : Expression, IPrintableExpression
     ///     any release. You should only use it directly in your code with extreme caution and knowing that
     ///     doing so can result in application failures when updating to a new Entity Framework Core release.
     /// </summary>
-    public virtual EntityShaperExpression? BindNavigation(INavigation navigation)
+    public virtual EntityShaperExpression BindNavigation(INavigation navigation)
     {
         if (!EntityType.IsAssignableFrom(navigation.DeclaringEntityType)
             && !navigation.DeclaringEntityType.IsAssignableFrom(EntityType))

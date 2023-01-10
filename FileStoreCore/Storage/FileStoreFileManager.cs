@@ -9,7 +9,7 @@ public class FileStoreFileManager : IFileStoreFileManager
 {
     private readonly string _filetype = ".json";
     private string _databasename = "";
-    private string? _location;
+    private string _location;
 
     public string GetFileName(IEntityType _entityType)
     {

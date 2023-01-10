@@ -12,7 +12,7 @@ public class FileStoreStoreCache : IFileStoreStoreCache
 
     public FileStoreStoreCache(
         IServiceProvider serviceProvider,
-        IFileStoreSingletonOptions? options)
+        IFileStoreSingletonOptions options)
     {
         _serviceProvider = serviceProvider;
 

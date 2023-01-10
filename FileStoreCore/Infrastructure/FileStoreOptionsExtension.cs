@@ -15,7 +15,7 @@ public class FileStoreOptionsExtension : IDbContextOptionsExtension
         _options = new(databaseName, location);
     }
 
-    public FileStoreDatabaseRoot? DatabaseRoot { get; set; }
+    public FileStoreDatabaseRoot DatabaseRoot { get; set; }
 
     public DbContextOptionsExtensionInfo Info => new FileStoreOptionsExtensionInfo(this);
 

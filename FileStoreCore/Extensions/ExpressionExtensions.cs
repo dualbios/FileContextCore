@@ -20,7 +20,7 @@ public static class ExpressionExtensions
 #pragma warning restore IDE0060 // Remove unused parameter
         => (TValue)valueBuffer[index]!;
 
-    public static Expression? UnwrapTypeConversion(this Expression? expression, out Type? convertedType)
+    public static Expression UnwrapTypeConversion(this Expression expression, out Type convertedType)
     {
         convertedType = null;
         while (expression is UnaryExpression unaryExpression

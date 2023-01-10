@@ -2,5 +2,5 @@
 
 public class FileStoreDatabaseRoot
 {
-    public object? Instance;
+    public object Instance;
 }

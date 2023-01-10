@@ -62,10 +62,10 @@ public partial class FileStoreShapedQueryCompilingExpressionVisitor
             private readonly IDiagnosticsLogger<DbLoggerCategory.Query> _queryLogger;
             private readonly bool _standAloneStateManager;
             private readonly CancellationToken _cancellationToken;
-            private readonly IConcurrencyDetector? _concurrencyDetector;
+            private readonly IConcurrencyDetector _concurrencyDetector;
             private readonly IExceptionDetector _exceptionDetector;
 
-            private IEnumerator<ValueBuffer>? _enumerator;
+            private IEnumerator<ValueBuffer> _enumerator;
 
             public Enumerator(QueryingEnumerable<T> queryingEnumerable, CancellationToken cancellationToken = default)
             {

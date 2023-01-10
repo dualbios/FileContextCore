@@ -5,7 +5,7 @@ namespace FileStoreCore;
 
 public class FileStoreSingletonOptions : IFileStoreSingletonOptions
 {
-    public virtual FileStoreDatabaseRoot? DatabaseRoot { get; private set; }
+    public virtual FileStoreDatabaseRoot DatabaseRoot { get; private set; }
 
     public virtual bool IsNullabilityCheckEnabled { get; private set; }
 

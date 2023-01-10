@@ -12,7 +12,7 @@ public class FileStoreTypeMappingSource: TypeMappingSource
 
     protected override CoreTypeMapping FindMapping(in TypeMappingInfo mappingInfo)
     {
-        Type? clrType = mappingInfo.ClrType;
+        Type clrType = mappingInfo.ClrType;
         Debug.Assert(clrType != null);
 
         if (clrType.IsValueType
@@ -29,7 +29,7 @@ public class FileStoreTypeMappingSource: TypeMappingSource
         if (clrType.FullName == "NetTopologySuite.Geometries.Geometry"
             || clrType.GetBaseTypes().Any(t => t.FullName == "NetTopologySuite.Geometries.Geometry"))
         {
-            ValueComparer? comparer = (ValueComparer)Activator.CreateInstance(typeof(GeometryValueComparer<>).MakeGenericType(clrType));
+            ValueComparer comparer = (ValueComparer)Activator.CreateInstance(typeof(GeometryValueComparer<>).MakeGenericType(clrType));
 
             return new FileSoreTypeMapping(
                 clrType,

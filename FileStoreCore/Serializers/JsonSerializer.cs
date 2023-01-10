@@ -56,7 +56,7 @@ public class JsonDataSerializer : ISerializer
             //_propertyKeys.Select(x=>KeyValuePair.Create<string, JsonNode?>(_propertyKeys[i], val.Value[i].Serialize()))
             for (int i = 0; i < _propertyKeys.Length; i++)
             {
-                var property = KeyValuePair.Create<string, JsonNode?>(_propertyKeys[i], val.Value[i].Serialize());
+                var property = KeyValuePair.Create<string, JsonNode>(_propertyKeys[i], val.Value[i].Serialize());
                 jsonObject.Add(property);
             }
 

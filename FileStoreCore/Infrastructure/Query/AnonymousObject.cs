@@ -29,7 +29,7 @@ public readonly struct AnonymousObject
         return x.Equals(y);
     }
 
-    public override bool Equals(object? obj)
+    public override bool Equals(object obj)
     {
         return obj is not null
                && (obj is AnonymousObject anonymousObject
