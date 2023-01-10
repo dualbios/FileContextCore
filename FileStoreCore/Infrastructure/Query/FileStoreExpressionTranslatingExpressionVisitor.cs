@@ -19,12 +19,6 @@ using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.Expres
 
 namespace FileStoreCore.Infrastructure.Query.Internal;
 
-/// <summary>
-///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-///     any release. You should only use it directly in your code with extreme caution and knowing that
-///     doing so can result in application failures when updating to a new Entity Framework Core release.
-/// </summary>
 public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
 {
     private const string RuntimeParameterPrefix = QueryCompilationContext.QueryParameterPrefix + "entity_equality_";
@@ -43,8 +37,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         QueryableMethods.LastWithoutPredicate,
         QueryableMethods.LastOrDefaultWithPredicate,
         QueryableMethods.LastOrDefaultWithoutPredicate
-        //QueryableMethodProvider.ElementAtMethodInfo,
-        //QueryableMethodProvider.ElementAtOrDefaultMethodInfo
     };
 
     private static readonly MemberInfo ValueBufferIsEmpty = typeof(ValueBuffer).GetMember(nameof(ValueBuffer.IsEmpty))[0];
@@ -92,12 +84,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
     private readonly EntityReferenceFindingExpressionVisitor _entityReferenceFindingExpressionVisitor;
     private readonly IModel _model;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public FileStoreExpressionTranslatingExpressionVisitor(
         QueryCompilationContext queryCompilationContext,
         QueryableMethodTranslatingExpressionVisitor queryableMethodTranslatingExpressionVisitor)
@@ -108,20 +94,8 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         _model = queryCompilationContext.Model;
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual string? TranslationErrorDetails { get; private set; }
+    public virtual string TranslationErrorDetails { get; private set; }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected virtual void AddTranslationErrorDetails(string details)
     {
         if (TranslationErrorDetails == null)
@@ -134,20 +108,14 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         }
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
-    public virtual Expression? Translate(Expression expression)
+    public virtual Expression Translate(Expression expression)
     {
         TranslationErrorDetails = null;
 
         return TranslateInternal(expression);
     }
 
-    private Expression? TranslateInternal(Expression expression)
+    private Expression TranslateInternal(Expression expression)
     {
         var result = Visit(expression);
 
@@ -157,12 +125,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
                 : result;
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitBinary(BinaryExpression binaryExpression)
     {
         if (binaryExpression.Left.Type == typeof(object[])
@@ -270,8 +232,8 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
 
             if (comparer != null)
             {
-                MethodInfo? objectEquals = null;
-                MethodInfo? exactMatch = null;
+                MethodInfo objectEquals = null;
+                MethodInfo exactMatch = null;
 
                 var converter = property?.GetValueConverter();
                 foreach (var candidate in comparer
@@ -390,7 +352,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
             return QueryCompilationContext.NotTranslatedExpression;
         }
 
-        bool IsGetTypeMethodCall(Expression expression, out EntityReferenceExpression? entityReferenceExpression)
+        bool IsGetTypeMethodCall(Expression expression, out EntityReferenceExpression entityReferenceExpression)
         {
             entityReferenceExpression = null;
             if (expression is not MethodCallExpression methodCallExpression
@@ -403,7 +365,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
             return entityReferenceExpression != null;
         }
 
-        static bool IsTypeConstant(Expression expression, out Type? type)
+        static bool IsTypeConstant(Expression expression, out Type type)
         {
             type = null;
             if (expression is not UnaryExpression { NodeType: ExpressionType.Convert or ExpressionType.ConvertChecked } unaryExpression
@@ -417,12 +379,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         }
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitConditional(ConditionalExpression conditionalExpression)
     {
         var test = Visit(conditionalExpression.Test);
@@ -451,12 +407,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return Expression.Condition(test, ifTrue, ifFalse);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitExtension(Expression extensionExpression)
     {
         switch (extensionExpression)
@@ -477,39 +427,15 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         }
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitInvocation(InvocationExpression invocationExpression)
         => QueryCompilationContext.NotTranslatedExpression;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitLambda<T>(Expression<T> lambdaExpression)
         => throw new InvalidOperationException("CoreStrings.TranslationFailed(lambdaExpression.Print())");
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitListInit(ListInitExpression listInitExpression)
         => QueryCompilationContext.NotTranslatedExpression;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitMember(MemberExpression memberExpression)
     {
         var innerExpression = Visit(memberExpression.Expression);
@@ -558,12 +484,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
                 && (memberName == nameof(Nullable<int>.Value) || memberName == nameof(Nullable<int>.HasValue)));
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override MemberAssignment VisitMemberAssignment(MemberAssignment memberAssignment)
     {
         var expression = Visit(memberAssignment.Expression);
@@ -580,12 +500,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return memberAssignment.Update(expression);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitMemberInit(MemberInitExpression memberInitExpression)
     {
         var newExpression = Visit(memberInitExpression.NewExpression);
@@ -614,12 +528,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return memberInitExpression.Update((NewExpression)newExpression, newBindings);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitMethodCall(MethodCallExpression methodCallExpression)
     {
         if (methodCallExpression.Method.IsGenericMethod
@@ -654,7 +562,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
 
             var shaperExpression = subqueryTranslation.ShaperExpression;
             var innerExpression = shaperExpression;
-            Type? convertedType = null;
+            Type convertedType = null;
             if (shaperExpression is UnaryExpression unaryExpression
                 && unaryExpression.NodeType == ExpressionType.Convert)
             {
@@ -714,7 +622,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
             return Expression.Call(Expression.New(typeof(Random)), RandomNextDoubleMethodInfo);
         }
 
-        Expression? @object = null;
+        Expression @object = null;
         Expression[] arguments;
         var method = methodCallExpression.Method;
 
@@ -899,12 +807,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return methodCallExpression.Update(@object, arguments);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitNew(NewExpression newExpression)
     {
         var newArguments = new List<Expression>();
@@ -927,12 +829,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return newExpression.Update(newArguments);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitNewArray(NewArrayExpression newArrayExpression)
     {
         var newExpressions = new List<Expression>();
@@ -955,12 +851,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return newArrayExpression.Update(newExpressions);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitParameter(ParameterExpression parameterExpression)
     {
         if (parameterExpression.Name?.StartsWith(QueryCompilationContext.QueryParameterPrefix, StringComparison.Ordinal) == true)
@@ -974,12 +864,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         throw new InvalidOperationException("CoreStrings.TranslationFailed(parameterExpression.Print())");
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     protected override Expression VisitTypeBinary(TypeBinaryExpression typeBinaryExpression)
     {
         if (typeBinaryExpression.NodeType == ExpressionType.TypeIs
@@ -1080,7 +964,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return result;
     }
 
-    private Expression? TryBindMember(Expression? source, MemberIdentity member, Type type)
+    private Expression TryBindMember(Expression source, MemberIdentity member, Type type)
     {
         if (!(source is EntityReferenceExpression entityReferenceExpression))
         {
@@ -1106,7 +990,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return null;
     }
 
-    private Expression? BindProperty(EntityReferenceExpression entityReferenceExpression, IProperty property, Type type)
+    private Expression BindProperty(EntityReferenceExpression entityReferenceExpression, IProperty property, Type type)
     {
         if (entityReferenceExpression.ParameterEntity != null)
         {
@@ -1182,7 +1066,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
                 readExpression));
     }
 
-    //[UsedImplicitly]
     private static T GetParameterValue<T>(QueryContext queryContext, string parameterName)
         => (T)queryContext.ParameterValues[parameterName]!;
 
@@ -1201,7 +1084,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
             ? Expression.Convert(expression, expression.Type.UnwrapNullableType())
             : expression;
 
-    private static IProperty? FindProperty(Expression expression)
+    private static IProperty FindProperty(Expression expression)
     {
         if (expression.NodeType == ExpressionType.Convert
             && expression.Type.IsNullableType()
@@ -1221,7 +1104,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         return null;
     }
 
-    private bool TryRewriteContainsEntity(Expression? source, Expression item, [NotNullWhen(true)] out Expression? result)
+    private bool TryRewriteContainsEntity(Expression source, Expression item, [NotNullWhen(true)] out Expression result)
     {
         result = null;
 
@@ -1301,7 +1184,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         Expression left,
         Expression right,
         bool equalsMethod,
-        [NotNullWhen(true)] out Expression? result)
+        [NotNullWhen(true)] out Expression result)
     {
         var leftEntityReference = left as EntityReferenceExpression;
         var rightEntityReference = right as EntityReferenceExpression;
@@ -1345,8 +1228,6 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         var leftEntityType = leftEntityReference?.EntityType;
         var rightEntityType = rightEntityReference?.EntityType;
         var entityType = leftEntityType ?? rightEntityType;
-
-        //Check.DebugAssert(entityType != null, "At least either side should be entityReference so entityType should be non-null.");
 
         if (leftEntityType != null
             && rightEntityType != null
@@ -1447,13 +1328,13 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         }
     }
 
-    private static T? ParameterValueExtractor<T>(QueryContext context, string baseParameterName, IProperty property)
+    private static T ParameterValueExtractor<T>(QueryContext context, string baseParameterName, IProperty property)
     {
         var baseParameter = context.ParameterValues[baseParameterName];
-        return baseParameter == null ? (T?)(object?)null : (T?)property.GetGetter().GetClrValue(baseParameter);
+        return baseParameter == null ? (T)(object)null : (T)property.GetGetter().GetClrValue(baseParameter);
     }
 
-    private static List<TProperty?>? ParameterListValueExtractor<TEntity, TProperty>(
+    private static List<TProperty> ParameterListValueExtractor<TEntity, TProperty>(
         QueryContext context,
         string baseParameterName,
         IProperty property)
@@ -1464,7 +1345,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         }
 
         var getter = property.GetGetter();
-        return baseListParameter.Select(e => e != null ? (TProperty?)getter.GetClrValue(e) : (TProperty?)(object?)null).ToList();
+        return baseListParameter.Select(e => e != null ? (TProperty)getter.GetClrValue(e) : (TProperty)(object)null).ToList();
     }
 
     private static ConstantExpression GetValue(Expression expression)
@@ -1530,7 +1411,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         => expression is ConstantExpression constantExpression && constantExpression.Value == null;
 
     [DebuggerStepThrough]
-    private static bool TranslationFailed(Expression? original, Expression? translation)
+    private static bool TranslationFailed(Expression original, Expression translation)
         => original != null
             && (translation == QueryCompilationContext.NotTranslatedExpression || translation is EntityReferenceExpression);
 
@@ -1629,7 +1510,7 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
         }
 
         [return: NotNullIfNotNull("expression")]
-        public override Expression? Visit(Expression? expression)
+        public override Expression Visit(Expression expression)
         {
             if (_found)
             {
@@ -1667,8 +1548,8 @@ public class FileStoreExpressionTranslatingExpressionVisitor : ExpressionVisitor
             EntityType = entityType;
         }
 
-        public EntityShaperExpression? ParameterEntity { get; }
-        public ShapedQueryExpression? SubqueryEntity { get; }
+        public EntityShaperExpression ParameterEntity { get; }
+        public ShapedQueryExpression SubqueryEntity { get; }
         public IEntityType EntityType { get; }
 
         public override Type Type

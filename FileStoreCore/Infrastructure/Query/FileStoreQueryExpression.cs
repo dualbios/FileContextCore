@@ -12,12 +12,6 @@ using ExpressionExtensions = Microsoft.EntityFrameworkCore.Infrastructure.Expres
 
 namespace FileStoreCore.Infrastructure.Query.Internal;
 
-/// <summary>
-///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-///     any release. You should only use it directly in your code with extreme caution and knowing that
-///     doing so can result in application failures when updating to a new Entity Framework Core release.
-/// </summary>
 public partial class FileStoreQueryExpression : Expression, IPrintableExpression
 {
     private static readonly ConstructorInfo ValueBufferConstructor
@@ -51,12 +45,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         _valueBufferParameter = valueBufferParameter;
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public FileStoreQueryExpression(IEntityType entityType)
     {
         _valueBufferParameter = Parameter(typeof(ValueBuffer), "valueBuffer");
@@ -123,29 +111,11 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         _projectionMapping[new ProjectionMember()] = entityProjection;
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual Expression ServerQueryExpression { get; private set; }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual ParameterExpression CurrentParameter
         => _groupingParameter ?? _valueBufferParameter;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ReplaceProjection(IReadOnlyList<Expression> clientProjections)
     {
         _projectionMapping.Clear();
@@ -154,12 +124,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         _clientProjections.AddRange(clientProjections);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ReplaceProjection(IReadOnlyDictionary<ProjectionMember, Expression> projectionMapping)
     {
         _projectionMapping.Clear();
@@ -236,23 +200,11 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         }
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual Expression GetProjection(ProjectionBindingExpression projectionBindingExpression)
         => projectionBindingExpression.ProjectionMember != null
             ? _projectionMapping[projectionBindingExpression.ProjectionMember]
             : _clientProjections[projectionBindingExpression.Index!.Value];
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ApplyProjection()
     {
         if (_scalarServerQuery)
@@ -359,21 +311,9 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         }
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void UpdateServerQueryExpression(Expression serverQueryExpression)
         => ServerQueryExpression = serverQueryExpression;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ApplySetOperation(MethodInfo setOperationMethodInfo, FileStoreQueryExpression source2)
     {
         //Check.DebugAssert(_groupingParameter == null, "Cannot apply set operation after GroupBy without flattening.");
@@ -457,12 +397,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
             setOperationMethodInfo.MakeGenericMethod(typeof(ValueBuffer)), ServerQueryExpression, source2.ServerQueryExpression);
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ApplyDefaultIfEmpty()
     {
         if (_clientProjections.Count != 0)
@@ -490,12 +424,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
             Constant(new ValueBuffer(Enumerable.Repeat((object?)null, _projectionMappingExpressions.Count).ToArray())));
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ApplyDistinct()
     {
         //    Check.DebugAssert(!_scalarServerQuery && _singleResultMethodInfo == null, "Cannot apply distinct on single result query");
@@ -551,12 +479,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
                 selectorLambda));
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual GroupByShaperExpression ApplyGrouping(
         Expression groupingKey,
         Expression shaperExpression,
@@ -611,12 +533,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
                 new QueryExpressionReplacingExpressionVisitor(this, clonedInMemoryQueryExpression).Visit(shaperExpression)));
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual Expression AddInnerJoin(
         FileStoreQueryExpression innerQueryExpression,
         LambdaExpression outerKeySelector,
@@ -627,12 +543,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
             innerQueryExpression, outerKeySelector, innerKeySelector, outerShaperExpression, innerShaperExpression,
             innerNullable: false);
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual Expression AddLeftJoin(
         FileStoreQueryExpression innerQueryExpression,
         LambdaExpression outerKeySelector,
@@ -643,12 +553,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
             innerQueryExpression, outerKeySelector, innerKeySelector, outerShaperExpression, innerShaperExpression,
             innerNullable: true);
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual Expression AddSelectMany(
         FileStoreQueryExpression innerQueryExpression,
         Expression outerShaperExpression,
@@ -656,12 +560,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         bool innerNullable)
         => AddJoin(innerQueryExpression, null, null, outerShaperExpression, innerShaperExpression, innerNullable);
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual EntityShaperExpression AddNavigationToWeakEntityType(
         EntityProjectionExpression entityProjectionExpression,
         INavigation navigation,
@@ -722,12 +620,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         return entityShaper;
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual ShapedQueryExpression Clone(Expression shaperExpression)
     {
         var clonedInMemoryQueryExpression = Clone();
@@ -737,12 +629,6 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
             new QueryExpressionReplacingExpressionVisitor(this, clonedInMemoryQueryExpression).Visit(shaperExpression));
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual Expression GetSingleScalarProjection()
     {
         var expression = CreateReadValueExpression(ServerQueryExpression.Type, 0, null);
@@ -759,39 +645,15 @@ public partial class FileStoreQueryExpression : Expression, IPrintableExpression
         return new ProjectionBindingExpression(this, new ProjectionMember(), expression.Type.MakeNullable());
     }
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public virtual void ConvertToSingleResult(MethodInfo methodInfo)
         => _singleResultMethodInfo = methodInfo;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public override Type Type
         => typeof(IEnumerable<ValueBuffer>);
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     public sealed override ExpressionType NodeType
         => ExpressionType.Extension;
 
-    /// <summary>
-    ///     This is an internal API that supports the Entity Framework Core infrastructure and not subject to
-    ///     the same compatibility standards as public APIs. It may be changed or removed without notice in
-    ///     any release. You should only use it directly in your code with extreme caution and knowing that
-    ///     doing so can result in application failures when updating to a new Entity Framework Core release.
-    /// </summary>
     void IPrintableExpression.Print(ExpressionPrinter expressionPrinter)
     {
         expressionPrinter.AppendLine(nameof(FileStoreQueryExpression) + ": ");

@@ -21,10 +21,14 @@ public partial class FileStoreQueryExpression
         }
 
         public IEnumerator<ValueBuffer> GetEnumerator()
-            => new ResultEnumerator(_getElement());
+        {
+            return new ResultEnumerator(_getElement());
+        }
 
         IEnumerator IEnumerable.GetEnumerator()
-            => GetEnumerator();
+        {
+            return GetEnumerator();
+        }
 
         private sealed class ResultEnumerator : IEnumerator<ValueBuffer>
         {
@@ -50,13 +54,19 @@ public partial class FileStoreQueryExpression
             }
 
             public void Reset()
-                => _moved = false;
+            {
+                _moved = false;
+            }
 
             object IEnumerator.Current
-                => Current;
+            {
+                get { return Current; }
+            }
 
             public ValueBuffer Current
-                => !_moved ? ValueBuffer.Empty : _value;
+            {
+                get { return !_moved ? ValueBuffer.Empty : _value; }
+            }
 
             void IDisposable.Dispose()
             {
@@ -82,10 +92,6 @@ public partial class FileStoreQueryExpression
         {
             if (expression is ProjectionBindingExpression projectionBindingExpression)
             {
-                //Check.DebugAssert(
-                //    projectionBindingExpression.ProjectionMember != null,
-                //    "ProjectionBindingExpression must have projection member.");
-
                 return new ProjectionBindingExpression(
                     _queryExpression,
                     _projectionMemberMappings[projectionBindingExpression.ProjectionMember],
@@ -114,10 +120,6 @@ public partial class FileStoreQueryExpression
         {
             if (expression is ProjectionBindingExpression projectionBindingExpression)
             {
-                //Check.DebugAssert(
-                //    projectionBindingExpression.ProjectionMember != null,
-                //    "ProjectionBindingExpression must have projection member.");
-
                 return new ProjectionBindingExpression(
                     _queryExpression,
                     _projectionMemberMappings[projectionBindingExpression.ProjectionMember],
@@ -150,10 +152,6 @@ public partial class FileStoreQueryExpression
             if (expression is ProjectionBindingExpression projectionBindingExpression
                 && ReferenceEquals(projectionBindingExpression.QueryExpression, _oldExpression))
             {
-                //Check.DebugAssert(
-                //    projectionBindingExpression.Index != null,
-                //    "ProjectionBindingExpression must have index.");
-
                 return new ProjectionBindingExpression(
                     _newExpression,
                     _indexMap[projectionBindingExpression.Index.Value],
@@ -167,9 +165,11 @@ public partial class FileStoreQueryExpression
     private sealed class EntityShaperNullableMarkingExpressionVisitor : ExpressionVisitor
     {
         protected override Expression VisitExtension(Expression extensionExpression)
-            => extensionExpression is EntityShaperExpression entityShaper
+        {
+            return extensionExpression is EntityShaperExpression entityShaper
                 ? entityShaper.MakeNullable()
                 : base.VisitExtension(extensionExpression);
+        }
     }
 
     private sealed class QueryExpressionReplacingExpressionVisitor : ExpressionVisitor
@@ -185,14 +185,16 @@ public partial class FileStoreQueryExpression
 
         [return: NotNullIfNotNull("expression")]
         public override Expression? Visit(Expression? expression)
-            => expression is ProjectionBindingExpression projectionBindingExpression
-                && ReferenceEquals(projectionBindingExpression.QueryExpression, _oldQuery)
-                    ? projectionBindingExpression.ProjectionMember != null
-                        ? new ProjectionBindingExpression(
-                            _newQuery, projectionBindingExpression.ProjectionMember!, projectionBindingExpression.Type)
-                        : new ProjectionBindingExpression(
-                            _newQuery, projectionBindingExpression.Index!.Value, projectionBindingExpression.Type)
-                    : base.Visit(expression);
+        {
+            return expression is ProjectionBindingExpression projectionBindingExpression
+                   && ReferenceEquals(projectionBindingExpression.QueryExpression, _oldQuery)
+                ? projectionBindingExpression.ProjectionMember != null
+                    ? new ProjectionBindingExpression(
+                        _newQuery, projectionBindingExpression.ProjectionMember!, projectionBindingExpression.Type)
+                    : new ProjectionBindingExpression(
+                        _newQuery, projectionBindingExpression.Index!.Value, projectionBindingExpression.Type)
+                : base.Visit(expression);
+        }
     }
 
     private sealed class CloningExpressionVisitor : ExpressionVisitor

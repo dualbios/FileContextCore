@@ -11,8 +11,8 @@ using FileContextCore.Query.Internal;
 using FileContextCore.Serializer;
 using FileContextCore.Storage.Internal;
 using FileContextCore.StoreManager;
-using FileContextCore.ValueGeneration.Internal;
 using FileContextCore.Utilities;
+using FileContextCore.ValueGeneration.Internal;
 using JetBrains.Annotations;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Diagnostics;
@@ -20,7 +20,6 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
-using Microsoft.EntityFrameworkCore.Utilities;
 using Microsoft.EntityFrameworkCore.ValueGeneration;
 
 // ReSharper disable once CheckNamespace
