@@ -1,20 +1,19 @@
-﻿namespace System.Text
-{
-    internal static class StringHelperExtensions
-    {
-        public static string GetValidFileName(this string input)
-        {
-            foreach (char c in Path.GetInvalidFileNameChars())
-            {
-                if (c == '\\' || c == '/')
-                {
-                    continue;
-                }
+﻿namespace System.Text;
 
-                input = input.Replace(c, '_');
+internal static class StringHelperExtensions
+{
+    public static string GetValidFileName(this string input)
+    {
+        foreach (char c in Path.GetInvalidFileNameChars())
+        {
+            if (c == '\\' || c == '/')
+            {
+                continue;
             }
 
-            return input;
+            input = input.Replace(c, '_');
         }
+
+        return input;
     }
 }
