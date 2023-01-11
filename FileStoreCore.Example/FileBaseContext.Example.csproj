@@ -12,7 +12,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\FileStoreCore\FileStoreCore.csproj" />
+    <ProjectReference Include="..\FileStoreCore\FileBaseContext.csproj" />
   </ItemGroup>
 
 </Project>

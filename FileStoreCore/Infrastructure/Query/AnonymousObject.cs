@@ -3,7 +3,7 @@
 
 using System.Reflection;
 
-namespace FileStoreCore.Infrastructure.Query.Internal;
+namespace kDg.FileBaseContext.Infrastructure.Query;
 
 public readonly struct AnonymousObject
 {

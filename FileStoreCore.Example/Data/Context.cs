@@ -1,5 +1,5 @@
 ﻿using FileStoreCore.Example.Data.Entities;
-using FileStoreCore.Extensions;
+using kDg.FileBaseContext.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace FileStoreCore.Example.Data

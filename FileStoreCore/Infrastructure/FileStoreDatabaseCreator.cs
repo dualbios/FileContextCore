@@ -1,7 +1,7 @@
-﻿using FileStoreCore.Storage;
+﻿using kDg.FileBaseContext.Storage;
 using Microsoft.EntityFrameworkCore.Storage;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileStoreDatabaseCreator : IDatabaseCreator
 {

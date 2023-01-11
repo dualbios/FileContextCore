@@ -3,7 +3,7 @@
 
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace FileStoreCore.Infrastructure.Query.Internal;
+namespace kDg.FileBaseContext.Infrastructure.Query;
 
 public class FileStoreQueryableMethodTranslatingExpressionVisitorFactory : IQueryableMethodTranslatingExpressionVisitorFactory
 {

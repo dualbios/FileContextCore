@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
+﻿using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Linq.Expressions;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileStoreTableExpression : Expression, IPrintableExpression
 {

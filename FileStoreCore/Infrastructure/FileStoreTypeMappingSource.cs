@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.ChangeTracking;
+﻿using System.Diagnostics;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Storage;
-using System.Diagnostics;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileStoreTypeMappingSource : TypeMappingSource
 {

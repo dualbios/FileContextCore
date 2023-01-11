@@ -1,16 +1,16 @@
-﻿using FileStoreCore.Infrastructure;
-using FileStoreCore.Serializers;
+﻿using System.Collections;
+using System.Collections.ObjectModel;
+using System.Diagnostics.CodeAnalysis;
+using kDg.FileBaseContext.Infrastructure;
+using kDg.FileBaseContext.Serializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Microsoft.EntityFrameworkCore.Update;
 using Microsoft.Extensions.DependencyInjection;
-using System.Collections;
-using System.Collections.ObjectModel;
-using System.Diagnostics.CodeAnalysis;
 
-namespace FileStoreCore.Storage;
+namespace kDg.FileBaseContext.Storage;
 
 public class FileStoreTable<TKey> : IFileStoreTable
 {

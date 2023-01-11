@@ -1,6 +1,6 @@
-﻿using FileStoreCore.Infrastructure;
-using FileStoreCore.Infrastructure.Query.Internal;
-using FileStoreCore.Storage;
+﻿using kDg.FileBaseContext.Infrastructure;
+using kDg.FileBaseContext.Infrastructure.Query;
+using kDg.FileBaseContext.Storage;
 using Microsoft.EntityFrameworkCore.Diagnostics;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
@@ -8,7 +8,7 @@ using Microsoft.EntityFrameworkCore.Query;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace FileStoreCore.Extensions;
+namespace kDg.FileBaseContext.Extensions;
 
 public static class FileStoreServiceCollectionExtensions
 {

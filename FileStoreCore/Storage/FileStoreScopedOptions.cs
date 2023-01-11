@@ -1,4 +1,4 @@
-﻿namespace FileStoreCore.Storage;
+﻿namespace kDg.FileBaseContext.Storage;
 
 public class FileStoreScopedOptions : IFileStoreScopedOptions
 {

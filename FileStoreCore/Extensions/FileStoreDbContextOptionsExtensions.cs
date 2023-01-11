@@ -1,8 +1,8 @@
-﻿using FileStoreCore.Infrastructure;
+﻿using kDg.FileBaseContext.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace FileStoreCore.Extensions;
+namespace kDg.FileBaseContext.Extensions;
 
 public static class FileStoreDbContextOptionsExtensions
 {

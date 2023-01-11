@@ -1,4 +1,4 @@
-﻿namespace FileStoreCore.Infrastructure;
+﻿namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileStoreDatabaseRoot
 {

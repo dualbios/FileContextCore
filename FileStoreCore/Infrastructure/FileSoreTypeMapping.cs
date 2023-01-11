@@ -2,7 +2,7 @@
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileSoreTypeMapping : CoreTypeMapping
 {

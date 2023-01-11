@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore.Metadata;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
 using System.Reflection;
+using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace FileStoreCore.Storage;
+namespace kDg.FileBaseContext.Storage;
 
 public class FileStoreTableFactory : IFileStoreTableFactory
 {

@@ -1,10 +1,10 @@
-﻿using FileStoreCore.Extensions;
+﻿using kDg.FileBaseContext.Extensions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Storage;
 using Microsoft.EntityFrameworkCore.Update;
 
-namespace FileStoreCore.Storage;
+namespace kDg.FileBaseContext.Storage;
 
 public class FileStoreDatabase : Database, IFileStoreDatabase
 {

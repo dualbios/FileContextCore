@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Conventions.Infrastructure;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileStoreConventionSetBuilder : ProviderConventionSetBuilder
 {

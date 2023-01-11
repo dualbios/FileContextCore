@@ -1,8 +1,8 @@
-﻿using FileStoreCore.Infrastructure;
+﻿using kDg.FileBaseContext.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Update;
 
-namespace FileStoreCore.Storage;
+namespace kDg.FileBaseContext.Storage;
 
 public interface IFileStoreTable
 {

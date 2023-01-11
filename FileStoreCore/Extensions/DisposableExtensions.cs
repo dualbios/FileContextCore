@@ -1,4 +1,4 @@
-﻿namespace FileStoreCore.Extensions;
+﻿namespace kDg.FileBaseContext.Extensions;
 
 internal static class DisposableExtensions
 {

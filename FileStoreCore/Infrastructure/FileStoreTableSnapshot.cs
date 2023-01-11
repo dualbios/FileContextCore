@@ -1,6 +1,6 @@
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 public class FileStoreTableSnapshot
 {

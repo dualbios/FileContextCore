@@ -1,7 +1,7 @@
-﻿using FileStoreCore.Storage;
-using System.Collections.Concurrent;
+﻿using System.Collections.Concurrent;
+using kDg.FileBaseContext.Storage;
 
-namespace FileStoreCore;
+namespace kDg.FileBaseContext;
 
 public class FileStoreStoreCache : IFileStoreStoreCache
 {

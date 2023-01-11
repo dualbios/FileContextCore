@@ -1,7 +1,7 @@
-using FileStoreCore.Storage;
+using kDg.FileBaseContext.Storage;
 using Microsoft.EntityFrameworkCore.Query;
 
-namespace FileStoreCore.Infrastructure;
+namespace kDg.FileBaseContext.Infrastructure;
 
 internal class FileStoreQueryContext : QueryContext
 {

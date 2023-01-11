@@ -1,9 +1,9 @@
-﻿using FileStoreCore.Serializers;
+﻿using System.Text;
+using kDg.FileBaseContext.Serializers;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Text;
 
-namespace FileStoreCore.Storage;
+namespace kDg.FileBaseContext.Storage;
 
 public class FileStoreFileManager : IFileStoreFileManager
 {

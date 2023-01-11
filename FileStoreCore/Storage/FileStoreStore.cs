@@ -1,9 +1,9 @@
-using FileStoreCore.Infrastructure;
+using kDg.FileBaseContext.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Update;
 
-namespace FileStoreCore.Storage;
+namespace kDg.FileBaseContext.Storage;
 
 internal class FileStoreStore : IFileStoreStore
 {

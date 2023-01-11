@@ -1,10 +1,10 @@
 ﻿// Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-using Microsoft.EntityFrameworkCore.Query;
 using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.Query;
 
-namespace FileStoreCore.Infrastructure.Query.Internal;
+namespace kDg.FileBaseContext.Infrastructure.Query;
 
 public class SingleResultShaperExpression : Expression, IPrintableExpression
 {

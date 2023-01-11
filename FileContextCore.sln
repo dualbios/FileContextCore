@@ -11,9 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ASPNETDemo", "ASPNETDemo\AS
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CascadeExample", "CascadeExample\CascadeExample.csproj", "{3D51BF95-B38E-4221-AAAE-5D093FD163DA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStoreCore", "FileStoreCore\FileStoreCore.csproj", "{7BA82073-515C-4F21-8A25-B62AD1264062}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext", "FileStoreCore\FileBaseContext.csproj", "{7BA82073-515C-4F21-8A25-B62AD1264062}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FileStoreCore.Example", "FileStoreCore.Example\FileStoreCore.Example.csproj", "{A66103C8-03D3-4C1F-A54B-DBEA9488B694}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "FileBaseContext.Example", "FileStoreCore.Example\FileBaseContext.Example.csproj", "{A66103C8-03D3-4C1F-A54B-DBEA9488B694}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

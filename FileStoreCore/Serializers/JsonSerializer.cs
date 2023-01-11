@@ -1,8 +1,8 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Text.Json.Nodes;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Text.Json.Nodes;
 
-namespace FileStoreCore.Serializers;
+namespace kDg.FileBaseContext.Serializers;
 
 public class JsonDataSerializer : ISerializer
 {
@@ -63,11 +63,4 @@ public class JsonDataSerializer : ISerializer
 
         return array.ToString();
     }
-}
-
-public interface ISerializer
-{
-    string Serialize<TKey>(Dictionary<TKey, object[]> list);
-
-    Dictionary<TKey, object[]> Deserialize<TKey>(string list, Dictionary<TKey, object[]> newList);
 }

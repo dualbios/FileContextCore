@@ -1,7 +1,7 @@
 ﻿using System.Collections;
 using System.Reflection;
 
-namespace FileStoreCore.Extensions;
+namespace kDg.FileBaseContext.Extensions;
 
 internal static class EnumerableMethods
 {

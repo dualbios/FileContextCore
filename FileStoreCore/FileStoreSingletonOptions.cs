@@ -1,7 +1,7 @@
-﻿using FileStoreCore.Infrastructure;
+﻿using kDg.FileBaseContext.Infrastructure;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace FileStoreCore;
+namespace kDg.FileBaseContext;
 
 public class FileStoreSingletonOptions : IFileStoreSingletonOptions
 {

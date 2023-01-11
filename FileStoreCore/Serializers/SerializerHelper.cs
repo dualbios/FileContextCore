@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Globalization;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using Microsoft.EntityFrameworkCore.Metadata;
-using System.Globalization;
 
-namespace FileStoreCore.Serializers
+namespace kDg.FileBaseContext.Serializers
 {
     public static class SerializerHelper
     {

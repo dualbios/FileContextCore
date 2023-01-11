@@ -1,8 +1,8 @@
-﻿using FileStoreCore.Infrastructure;
-using FileStoreCore.Storage;
+﻿using kDg.FileBaseContext.Infrastructure;
+using kDg.FileBaseContext.Storage;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 
-namespace FileStoreCore.Extensions;
+namespace kDg.FileBaseContext.Extensions;
 
 public static class FileStoreCacheExtensions
 {
